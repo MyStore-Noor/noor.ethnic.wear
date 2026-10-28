@@ -38,10 +38,14 @@ node scripts/import-reference.mjs /path/to/reference/apps/web/src/data/catalog.j
 
 ## Verification
 
-`npm test`: 7 tests for CSV parsing, type handling, order messages, all 448 unique handles/2904 photos, CSV integrity, memberships, size pricing and sold-out flags.
+`npm test`: 9 tests for CSV parsing, type handling, order messages, all 448 unique handles/2904 photos, CSV integrity, memberships, size pricing and sold-out flags.
 
 `tests/browser.mjs`: optional headless Chromium QA at 390, 820 and 1440px. Passed gallery, full-screen, bag, customer form, WhatsApp destination, advanced filter reset, home rails, repeated product links and horizontal-overflow checks. CDN photos and WhatsApp navigation are stubbed in these tests; no actual customer order or message was sent. Actual CDN accessibility, Google writes and real-device network performance remain unverified.
 
 ## Deployment
 
 Current-branch push triggers `.github/workflows/pages.yml`. GitHub Pages enablement was previously denied by the integration (403). Custom domain is still unconfirmed. No claim of production publication or live payment confirmation is made.
+
+## Latest product-page fix
+
+The owner-confirmed Noor three-layout artwork is now used, with independent device-specific files and Sheet paths. Product details now have a dedicated full-page hash route, separate from shopping/help modals. A Saga-inspired size chart provides inches/cm, source-label measurements, sold-out states and a measuring illustration without inventing garment dimensions. See [HERO-PDP-REVISION](docs/HERO-PDP-REVISION.md).
