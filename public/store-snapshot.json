@@ -1,0 +1,88 @@
+{
+  "settings": {
+    "store_name": "Noor Ethnic Wear",
+    "announcement": "The Diwali edit is here. A little tradition, a lot of sparkle.",
+    "whatsapp": "",
+    "hero_eyebrow": "THE FESTIVAL OF YOU",
+    "hero_title": "This Diwali, wear your light.",
+    "hero_subtitle": "Rich colours. Beautiful details. Pieces made for your brightest moments.",
+    "story": "Rooted in tradition. Worn your way. Noor Ethnic Wear celebrates Indian silhouettes, thoughtful details and the joy of dressing up.",
+    "instagram_url": "https://www.instagram.com/noorethnicwear"
+  },
+  "products": [
+    {
+      "id": "green-bandhej-maslin-anarkali-suit-set-td-141-copy",
+      "title": "Devine Pure Rangoli Silk Anarkali Suit Set",
+      "price": 599,
+      "compare_price": 1996.67,
+      "images": "https://cdn.shopify.com/s/files/1/0738/8345/1696/files/IMG_9512.webp|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/IMG_9513.webp|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/IMG_9511.webp|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/IMG_9516.webp",
+      "category": "anarkali",
+      "sizes": "XS [34]|S [36]|M [38]",
+      "colour": "White",
+      "fabric": "Rangoli Silk",
+      "description": "Devine Pure Rangoli Silk Anarkali Suit Set Model is Wearing: S Size Model Height: 5.5 Care: DRY CLEAN KURTA- Fabric – Pure Rangoli Silk Kurta Length – 48 ” Front Neck – 7 “ Back Neck – Closed“ Sleeves – 19 “(Front slit ) PANT- Fabric – Rangoli Silk Length – 38” Dupatta :",
+      "active": "true",
+      "in_stock": "true"
+    },
+    {
+      "id": "tridha-fendy-silk-blush-pink-anarkali-premium-suit-set",
+      "title": "Tridha Fendy Silk Blush Pink Anarkali Premium Suit Set",
+      "price": 499,
+      "compare_price": 1247.5,
+      "images": "https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08059_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08061_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08056_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08062_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08057_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08060_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08058_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08063_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08066_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08067_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08070_JPG.jpg",
+      "category": "anarkali",
+      "sizes": "XS [34]|S [36]|M [38]|L [40]|XL [42]|2XL [44]|3XL [46]",
+      "colour": "Blush Pink",
+      "fabric": "Fendy Silk",
+      "description": "Anarkali Top Fabric: Fendy Inner: Soft Micro Cotton Work: Intricate Thread & Sequin Embroidery with Lace Border and Dori Latkan Style: Slit Anarkali Pattern with Flowy Silhouette Pants Fabric: Heavy Micro Cotton Length: 38 inches Fit: Fully Stitched with Comfortable Finish Dupatta Fabric: Fendy Work: Thread & Sequin Embroidery with Four-Side Lace Border Length: 2.3 meters Additional Details",
+      "active": "true",
+      "in_stock": "true"
+    },
+    {
+      "id": "luxury-mustard-embroidered-georgette-anarkali-suit",
+      "title": "Luxury Mustard Embroidered Georgette Anarkali Suit",
+      "price": 699,
+      "compare_price": 2330,
+      "images": "https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08096_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08093_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08100_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08086_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08085_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08095_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08090_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08098_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08097_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08094_JPG.jpg",
+      "category": "anarkali",
+      "sizes": "XS [34]|S [36]|M [38]|L [40]|XL [42]|2XL [44]|3XL [46]",
+      "colour": "Mustard",
+      "fabric": "Georgette",
+      "description": "Luxury Mustard Georgette Anarkali Suit – Royal Elegance in Every Thread Elegant, graceful, and effortlessly luxurious — the Luxury Mustard Georgette Anarkali Suit is designed for women who love a rich and sophisticated ethnic look. Crafted in soft Georgette with intricate embroidery and shimmering 9mm sequin detailing, this fully stitched Anarkali creates a beautiful flowy silhouette that is…",
+      "active": "true",
+      "in_stock": "true"
+    },
+    {
+      "id": "luxury-off-white-georgette-anarkali-suit",
+      "title": "Luxury Off-White Georgette Anarkali Suit",
+      "price": 599,
+      "compare_price": 1996.67,
+      "images": "https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08106_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08110_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08105_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08104_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08102_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08108_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08112_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08109_JPG.jpg|https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08111_JPG.jpg",
+      "category": "anarkali",
+      "sizes": "XS [34]|S [36]|M [38]|L [40]|XL [42]|2XL [44]|3XL [46]",
+      "colour": "White",
+      "fabric": "Georgette",
+      "description": "Aniska Off-White Embroidered Georgette Anarkali Suit Set – Elegance in Every Thread Graceful, timeless, and regal — the Aniska Off-White Anarkali Suit Set is a symbol of understated luxury. Designed in soft Georgette with intricate embroidery and shimmering 9mm sequins, this fully stitched set is perfect for bridesmaids, festive soirées, and elegant gatherings. Product Details Anarkali Kurta…",
+      "active": "true",
+      "in_stock": "true"
+    }
+  ],
+  "categories": [
+    {
+      "id": "anarkali",
+      "title": "Anarkali Suits",
+      "subtitle": "A little twirl, a lot of tradition",
+      "image": "https://cdn.shopify.com/s/files/1/0738/8345/1696/files/DSC08059_JPG.jpg"
+    },
+    {
+      "id": "lehenga",
+      "title": "Lehenga Choli",
+      "subtitle": "For your grand entrance"
+    },
+    {
+      "id": "printed",
+      "title": "Printed Suit Sets",
+      "subtitle": "Everyday, beautifully dressed"
+    }
+  ]
+}
