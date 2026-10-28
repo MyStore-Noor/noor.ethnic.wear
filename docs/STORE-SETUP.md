@@ -55,3 +55,19 @@ Settings `show_categories`, `show_home_rails`, `show_story`, `show_service_strip
 HomeSections rows: change `title`, `subtitle`, `collection`, `count` or `active`. Product rows additionally support `collections` (pipe-separated), `size_pricing` (JSON in rupees), `colour_group`, `details` (pipe-separated) and `published_at`.
 
 Browser automation is now available and passed at 390/820/1440px with external services mocked. Earlier note about no browser verification describes the first revision, not the latest tests. Live Sheet writes/real-device performance still need authorization and real-service testing.
+
+## Publishing status (verified 2026-10-28)
+
+The Pages workflow builds and passes tests, but **GitHub Pages is not enabled on this repository**, so
+`actions/configure-pages` stops with `Resource not accessible by integration` and no live URL exists yet.
+The connected GitHub token is a GitHub App installation without Pages administration rights, so it cannot
+create the site through the API.
+
+Owner action (one time): open <https://github.com/MyStore-Noor/noor.ethnic.wear/settings/pages>, set
+**Build and deployment → Source: GitHub Actions**, then re-run the latest **Deploy Noor to GitHub Pages**
+workflow. If the connected GitHub account in Arena can be reconnected with repository-admin/Pages scope,
+the agent can enable it and verify the live URL directly.
+
+The production `dist/` output was also served from a sub-path (`/noor.ethnic.wear/`) and checked in a browser:
+all 448 products, the WhatsApp button and PIN verification loaded without errors, so the build is
+Pages-ready as soon as the site is enabled.
