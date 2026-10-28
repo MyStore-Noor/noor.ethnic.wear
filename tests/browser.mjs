@@ -70,28 +70,56 @@ for(const width of [390,820,1440]){
  await page.locator('#add-form button').first().click();await page.locator('#bag-open').click();
  assert.match(await page.locator('#panel-content').textContent(),/Subtotal/);
  await page.locator('#checkout-open').click();await page.locator('#checkout').waitFor();
- await page.locator('[name="name"]').fill('QA Customer');await page.locator('[name="phone"]').fill('9999999999');
- await page.locator('[name="address"]').fill('Test address Jaipur');
+ await page.locator('[name="name"]').fill('QA Customer');
+ // Autofill prefixes (+91 / 91 / 0) must be stripped to exactly 10 digits.
+ await page.locator('[name="phone"]').fill('+91 97857 95831');
+ assert.equal(await page.locator('[name="phone"]').inputValue(),'9785795831');
+ await page.locator('[name="phone"]').fill('09785795831');assert.equal(await page.locator('[name="phone"]').inputValue(),'9785795831');
+ await page.locator('[name="phone"]').fill('919785795831');assert.equal(await page.locator('[name="phone"]').inputValue(),'9785795831');
+ await page.locator('[name="phone"]').blur();assert.equal(await page.locator('[name="phone"]').inputValue(),'9785795831');
+ await page.locator('[name="address"]').fill('12 Johari Bazaar, near Hawa Mahal, Jaipur');
+ assert.equal(await page.locator('#checkout [name="email"]').getAttribute('type'),'email');
  // Checkout verification: an unknown PIN is rejected, a real PIN is verified, and only then can WhatsApp open.
  await page.locator('[name="pincode"]').fill('999999');await page.locator('#check-pin').click();
  await page.waitForFunction(()=>document.querySelector('#pin-status').classList.contains('fail'));
  assert.equal(await page.locator('#checkout-submit').isDisabled(),true);
  assert.match(await page.locator('#pin-status').innerText(),/couldn’t find this PIN/);
+ assert.equal(await page.locator('#checkout-city').inputValue(),'');assert.equal(await page.locator('#checkout-state').inputValue(),'');
  await page.locator('[name="pincode"]').fill('302001');await page.locator('#check-pin').click();
  await page.waitForFunction(()=>document.querySelector('#pin-status').classList.contains('ok'));
  assert.match(await page.locator('#pin-status').innerText(),/Jaipur, Rajasthan/);
- assert.match(await page.locator('#pin-status').innerText(),/Delivery timing and charges will be confirmed on WhatsApp/);
+ assert.match(await page.locator('#pin-status').innerText(),/Delivery timing and charges are confirmed on WhatsApp/);
+ // City and state are filled from the PIN itself and cannot be typed over.
+ assert.equal(await page.locator('#checkout-city').inputValue(),'Jaipur');
+ assert.equal(await page.locator('#checkout-state').inputValue(),'Rajasthan');
+ assert.equal(await page.locator('#checkout-city').getAttribute('readonly'),'');assert.equal(await page.locator('#checkout-state').getAttribute('readonly'),'');
+ // The verified deliverable PIN sits directly under the order summary.
+ assert.equal(await page.locator('#verified-delivery').isVisible(),true);
+ assert.match(await page.locator('#verified-delivery').innerText(),/Verified deliverable PIN/i);
+ assert.match(await page.locator('#verified-delivery').innerText(),/302001/);
+ assert.match(await page.locator('#verified-delivery').innerText(),/Jaipur, Rajasthan/);
+ assert.ok(await page.locator('.order-review #verified-delivery').count()===1);
  assert.equal(await page.locator('#checkout-submit').isEnabled(),true);
+ // Missing email is refused before WhatsApp opens, and focus returns to the field.
+ await page.locator('#checkout-submit').click();
+ await page.waitForFunction(()=>document.querySelector('#checkout [name="email"]').getAttribute('aria-invalid')==='true');
+ assert.equal(context.pages().length,1);
+ await page.locator('[name="email"]').fill('qa.customer@example.com');
+ await page.locator('[name="email"]').blur();
  await page.screenshot({path:`/home/user/noor-new-checkout-${width}.png`});
  const popupPromise=page.waitForEvent('popup');await page.locator('#checkout-submit').click();const popup=await popupPromise;
  await popup.waitForURL(/wa.me|whatsapp/,{timeout:15000}).catch(()=>{});assert.ok(popup.url().includes('919785795831'));
- assert.match(decodeURIComponent(popup.url()),/Delivery PIN verified: Jaipur, Rajasthan/);assert.doesNotMatch(await page.locator('#panel-content').innerText(),/Sheet|saved|recorded|setup|configuration/i);assert.match(await page.locator('#panel-content').innerText(),/Send your WhatsApp message/);await page.locator('#panel-close').click();await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
+ const waText=decodeURIComponent(popup.url());
+ for(const expected of ['Verified deliverable PIN: 302001','Jaipur, Rajasthan','City / District: Jaipur','State: Rajasthan','Email: qa.customer@example.com','Phone: +91 9785795831'])assert.ok(waText.includes(expected),'WhatsApp message missing '+expected);
+ assert.doesNotMatch(await page.locator('#panel-content').innerText(),/Sheet|saved|recorded|setup|configuration/i);assert.match(await page.locator('#panel-content').innerText(),/Send your WhatsApp message/);
+ assert.match(await page.locator('#panel-content .verified-pin').innerText(),/302001/);
+await page.locator('#panel-close').click();await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
  assert.equal(await page.locator('#product-page').evaluate(e=>e.hidden),true);
  await page.locator('#advanced-open').click();await page.locator('#filter-stock').check();await page.locator('#reset-filters').click();
  assert.match(await page.locator('#product-count').textContent(),/448/);
  await page.locator('#products a').first().click();await page.locator('#add-form').waitFor();
  await page.reload();await page.locator('#product-page #add-form').waitFor();assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);
- console.log(`PASS ${width}px: new banner, full PDP + deep link/reload/back, gallery, inches/cm chart, sold-out guard, size retention, bag + verified delivery PIN + WhatsApp, fixed WhatsApp button, no overflow`);
+ console.log(`PASS ${width}px: new banner, full PDP + deep link/reload/back, gallery, inches/cm chart, sold-out guard, size retention, bag + email + PIN-derived city/state + verified deliverable PIN + WhatsApp, fixed WhatsApp button, no overflow`);
  await browser.close();
 }
 assert.deepEqual(errors,[]);

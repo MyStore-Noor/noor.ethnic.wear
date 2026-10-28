@@ -20,7 +20,8 @@ function doPost(e){
  try{
   if(!e.postData||e.postData.contents.length>16000)throw new Error('Invalid request');
   var o=JSON.parse(e.postData.contents);
-  if(!o.name||String(o.name).length>100||!/[0-9]{10}/.test(String(o.phone).replace(/\D/g,''))||!/^\d{6}$/.test(o.pincode)||!o.address||String(o.address).length>500||!Array.isArray(o.items)||!o.items.length||o.items.length>30)throw new Error('Invalid customer details');
+  var phone=String(o.phone||'').replace(/\D/g,'').replace(/^(?:91|0)(?=\d{10}$)/,'');if(!o.name||String(o.name).trim().length<2||String(o.name).length>100||!/^[6-9]\d{9}$/.test(phone)||!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(o.email||''))||String(o.email).length>120||!/^[1-9]\d{5}$/.test(String(o.pincode||''))||!o.address||String(o.address).trim().length<10||String(o.address).length>500||!String(o.city||'').trim()||!String(o.state||'').trim()||!Array.isArray(o.items)||!o.items.length||o.items.length>30)throw new Error('Invalid customer details');
+  o.phone=phone;
   lock.waitLock(10000);
   var products=table_('Products'), total=0;
   var items=o.items.map(function(i){
@@ -34,7 +35,7 @@ function doPost(e){
   var cache=CacheService.getScriptCache(), key='order_'+String(o.phone).replace(/\D/g,'');
   if(cache.get(key))throw new Error('Please wait before requesting another order');
   var id='NOOR-'+Utilities.getUuid().slice(0,8).toUpperCase();
-  sheet.appendRow([id,new Date().toISOString(),safeCell_(o.name),safeCell_(o.phone),safeCell_(o.address),safeCell_(o.pincode),total,'WhatsApp request, not confirmed',JSON.stringify(items)]);
+  sheet.appendRow([id,new Date().toISOString(),safeCell_(o.name),safeCell_(o.phone),safeCell_(o.address),safeCell_(o.pincode),total,'WhatsApp request, not confirmed',JSON.stringify(items),safeCell_(o.email),safeCell_(o.city||''),safeCell_(o.state||''),'PIN verified on storefront']);
   var itemSheet=SpreadsheetApp.getActive().getSheetByName('OrderItems');
   items.forEach(function(i){itemSheet.appendRow([id,safeCell_(i.id),safeCell_(i.title),safeCell_(i.size),i.quantity,i.price]);});
   cache.put(key,'1',30);
@@ -44,7 +45,7 @@ function doPost(e){
 }
 
 /** Run only from the authorized editor or bound-sheet menu, never an anonymous HTTP action. */
-function onOpen(){SpreadsheetApp.getUi().createMenu('Noor Store').addItem('Import all 448 reference products','importAllReferenceProducts').addItem('Make imported products editable','materializeProducts').addToUi();}
+function onOpen(){var orders=SpreadsheetApp.getActive().getSheetByName('Orders');if(orders&&orders.getLastColumn()<13){var headers=orders.getRange(1,1,1,orders.getLastColumn()).getValues()[0];['email','city','state','delivery_check'].forEach(function(h,i){if(headers.indexOf(h)<0)orders.getRange(1,orders.getLastColumn()+1).setValue(h);});}SpreadsheetApp.getUi().createMenu('Noor Store').addItem('Import all 448 reference products','importAllReferenceProducts').addItem('Make imported products editable','materializeProducts').addToUi();}
 function importAllReferenceProducts(){
  var ui=SpreadsheetApp.getUi();
  if(ui.alert('Import all reference products?','This backs up Products and replaces the catalog with all 448 reference items. Orders are untouched.',ui.ButtonSet.YES_NO)!==ui.Button.YES)return;
