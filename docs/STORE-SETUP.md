@@ -45,3 +45,13 @@ Shipping fee automatic add nahi hoti. Order message subtotal bhejta hai, final c
 ## Verification notes
 
 Build aur CSV/product/message unit tests pass hain. Sandbox network Google endpoints aur product image CDN ko reach nahi kar sakta, isliye actual live Sheet/WhatsApp write flow test pending hai. Browser engine download bhi network restriction ki wajah se blocked tha; desktop/mobile visual QA ko verified nahi maana gaya. Original branding files local hain, product photos source CDN par rehti hain.
+
+## Updated: full-catalog revision
+
+The first-version four-product instructions above are superseded by [IMPORT-STATUS.md](IMPORT-STATUS.md): all 448 source products are now in the website export, and the actual Sheet bulk import awaits Google's desktop **Allow access** permission. WhatsApp is now configured in the actual Sheet using the supplied owner number.
+
+Settings `show_categories`, `show_home_rails`, `show_story`, `show_service_strip`, `show_closing`: `false` hides a section, `true` shows it. The extra hero copy has been removed outright. `hero_image` is desktop, `hero_image_tablet` is tablet, `hero_image_mobile` is the phone portrait. Each image is shown uncropped at its own aspect ratio. Poster artwork includes the owner's printed offer/payment/return statements; the site itself only makes WhatsApp order requests, so confirm your policy and poster claims before launch.
+
+HomeSections rows: change `title`, `subtitle`, `collection`, `count` or `active`. Product rows additionally support `collections` (pipe-separated), `size_pricing` (JSON in rupees), `colour_group`, `details` (pipe-separated) and `published_at`.
+
+Browser automation is now available and passed at 390/820/1440px with external services mocked. Earlier note about no browser verification describes the first revision, not the latest tests. Live Sheet writes/real-device performance still need authorization and real-service testing.

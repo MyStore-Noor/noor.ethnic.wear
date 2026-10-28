@@ -1,6 +1,6 @@
-# Noor Ethnic Wear, the Diwali edit
+# Noor Ethnic Wear, full catalog festive store
 
-A small, static, mobile-first storefront. Vanilla JavaScript and CSS, bundled with Vite. Original logo and festive poster from the supplied Noor reference; Sheet catalog and direct WhatsApp order requests based on the supplied Tannu workflow. No server runtime or payment gateway is required on GitHub Pages.
+Static, mobile-first storefront using original Noor artwork and the requested Tannu reference catalog/workflow. Vanilla JavaScript/CSS with Vite; GitHub Pages Actions deployment included.
 
 ## Run
 
@@ -11,20 +11,37 @@ npm test
 npm run build
 ```
 
-## Store control
+## This revision
 
-[Open the Store Control Sheet](https://docs.google.com/spreadsheets/d/1UlPFsN1aL1OIi_5tpOc8pF3WstbzPOdf1QFygp9E8Ro/edit)
+- **448 products, 2,904 photo URLs**, all source prices, size pricing/availability, descriptions, colours and memberships.
+- Original Noor image-only hero with desktop/tablet/mobile image sources, including the original portrait poster on phones.
+- Source-style category circles and Trending, curated Best Sellers, New Arrivals, Lehenga Choli and Explore rails.
+- Advanced collection, colour, size, fabric, price and availability filters; search, sorting, wishlist and persistent shopping bag.
+- Thumbnail gallery, previous/next, swipe, keyboard navigation, hover zoom, full-screen viewer, colour-linked products, quantity, buy now, share, detail/shipping/returns accordions.
+- Sheet phone set to the supplied number; no contact fallback embedded in JS. All contact UI uses loaded settings.
+- Sheet settings hide/show categories, home rails, story, services and closing CTA. Categories and HomeSections have their own active flags.
+- Refined directional-fill buttons, press feedback and second-photo hover. Saga page content was inspected, but its exact animation implementation was not available through the fetched text, so these are independently implemented rather than claimed pixel-identical copies.
 
-Read [the Hinglish owner guide](docs/STORE-SETUP.md). Products, prices, available sizes, descriptions, WhatsApp and policies come from the Sheet. Four actual reference products were added as starter rows. The complete reference catalog is in `docs/catalog-import.csv`, ready for import, with source prices and available sizes preserved. Stock values are source availability flags, not verified stock counts.
+[Store Control Sheet](https://docs.google.com/spreadsheets/d/1UlPFsN1aL1OIi_5tpOc8pF3WstbzPOdf1QFygp9E8Ro/edit)
 
-`public/store-snapshot.json` is a starter Sheet-shaped last-good snapshot, not a second catalog to maintain. The deployment updates it from the Sheet bridge when configured. It provides an honest labeled offline preview, never a fallback WhatsApp number. Runtime refreshes use the Sheet every 30 seconds while the tab is visible and dialogs are closed. No third-party font dependency or heavy animation library.
+**Read [IMPORT-STATUS](docs/IMPORT-STATUS.md) for the external-data permission needed to complete the Google Sheet bulk import.** Existing Products were backed up. The website already contains all 448 reference products as a labeled snapshot; live private-Sheet sync and order writes await the Apps Script deployment, described in [STORE-SETUP](docs/STORE-SETUP.md).
 
-## Deployment status
+## Catalog export
 
-The GitHub Actions workflow is included. Publishing, Apps Script authorization and custom-domain DNS must be completed before calling the store live. No domain is assumed from conflicting comments in the old repository. Do not publish the entire Sheet because Orders contains private customer details.
+`public/store-snapshot.json` is a full exported last-known catalog/settings payload, not a second runtime catalog to maintain. The build replaces it from the authorized Sheet bridge. `public/catalog-seed.json` and `docs/catalog-import.csv` are the one-time migration inputs. A migration marker prevents the old four-row starter Sheet from silently truncating the full reference export. After migration, intentional product removals are respected.
 
-## Implemented
+To regenerate migration files from a local checkout of the supplied reference:
 
-Responsive original-brand hero, category filters, search, price sorting, wishlist, product details, source size choices, persistent bag, quantity edits, customer form and WhatsApp message, reduced motion, keyboard dialogs, Sheet-backed settings and validated Apps Script order capture. No invented reviews, fake order confirmations or unsupported payment claims.
+```
+node scripts/import-reference.mjs /path/to/reference/apps/web/src/data/catalog.json
+```
 
-Not copied: old database, admin authentication, UPI payment verification, coupons, invoices, shipment tracking. This version intentionally uses direct WhatsApp confirmation; corresponding unused Sheet tabs are reserved for later features.
+## Verification
+
+`npm test`: 7 tests for CSV parsing, type handling, order messages, all 448 unique handles/2904 photos, CSV integrity, memberships, size pricing and sold-out flags.
+
+`tests/browser.mjs`: optional headless Chromium QA at 390, 820 and 1440px. Passed gallery, full-screen, bag, customer form, WhatsApp destination, advanced filter reset, home rails, repeated product links and horizontal-overflow checks. CDN photos and WhatsApp navigation are stubbed in these tests; no actual customer order or message was sent. Actual CDN accessibility, Google writes and real-device network performance remain unverified.
+
+## Deployment
+
+Current-branch push triggers `.github/workflows/pages.yml`. GitHub Pages enablement was previously denied by the integration (403). Custom domain is still unconfirmed. No claim of production publication or live payment confirmation is made.
