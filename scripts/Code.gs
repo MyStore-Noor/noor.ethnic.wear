@@ -9,9 +9,9 @@ function json_(value){return ContentService.createTextOutput(JSON.stringify(valu
 function doGet(e){
   try {
     if(e.parameter.action!=='catalog')return json_({ok:true,service:'Noor Store Sheet Bridge'});
-    var allowed=['store_name','announcement','whatsapp','support_phone','hero_eyebrow','hero_title','hero_subtitle','hero_image','logo','instagram_url','story','shipping_policy','return_policy','hero_image_mobile','hero_image_tablet','catalog_version','show_story','show_categories','show_home_rails','show_service_strip','show_closing'];
+    var allowed=['store_name','announcement','whatsapp','support_phone','hero_eyebrow','hero_title','hero_subtitle','hero_image','logo','instagram_url','story','shipping_policy','return_policy','hero_image_mobile','hero_image_tablet','catalog_version','show_story','show_categories','show_home_rails','show_service_strip','show_closing','delivery_days','shipping_fee','blocked_pincodes','blocked_states','allowed_states'];
     var settings={};table_('Settings').forEach(function(r){if(allowed.indexOf(r.key)>=0)settings[r.key]=r.value;});
-    return json_({ok:true,settings:settings,products:table_('Products').filter(function(p){return p.active.toLowerCase()==='true';}),categories:table_('Categories'),homeSections:table_('HomeSections'),catalogVersion:settings.catalog_version});
+    return json_({ok:true,settings:settings,products:table_('Products').filter(function(p){return p.active.toLowerCase()==='true';}),categories:table_('Categories'),homeSections:table_('HomeSections'),deliveryRules:table_('DeliveryRules'),catalogVersion:settings.catalog_version});
   }catch(err){return json_({ok:false,error:'Store data unavailable'});}
 }
 function safeCell_(s){s=String(s===null||s===undefined?'':s);return /^[=+@\-]/.test(s)?"'"+s:s;}

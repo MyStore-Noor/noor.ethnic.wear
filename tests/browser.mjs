@@ -19,6 +19,11 @@ for(const width of [390,820,1440]){
  await page.screenshot({path:`/home/user/noor-new-home-${width}.png`});
  assert.equal(await page.locator('.home-rail').count(),5);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`home overflow at ${width}`);
+ // The floating WhatsApp button always takes its number and prefilled message from the Sheet settings.
+ const fab=page.locator('#wa-fab');assert.equal(await fab.isVisible(),true);const fabHref=await fab.getAttribute('href');
+ assert.ok(fabHref.startsWith('https://wa.me/919785795831?text='),'WhatsApp button must use the Sheet number');
+ assert.match(decodeURIComponent(fabHref),/Noor Ethnic Wear/);
+ const fabBox=await fab.boundingBox();assert.ok(fabBox.x+fabBox.width>width-90&&fabBox.y+fabBox.height>900-90,'WhatsApp button must sit bottom-right');
  // Customer copy never exposes owner-only integration messages.
  assert.equal(await page.locator('#sync-status').isVisible(),false);
  assert.doesNotMatch(await page.locator('body').innerText(),/store Sheet|source size|reference pieces|needs authorization|live connection|configuration|नूर/i);
@@ -66,16 +71,27 @@ for(const width of [390,820,1440]){
  assert.match(await page.locator('#panel-content').textContent(),/Subtotal/);
  await page.locator('#checkout-open').click();await page.locator('#checkout').waitFor();
  await page.locator('[name="name"]').fill('QA Customer');await page.locator('[name="phone"]').fill('9999999999');
- await page.locator('[name="address"]').fill('Test address Jaipur');await page.locator('[name="pincode"]').fill('302001');
- const popupPromise=page.waitForEvent('popup');await page.locator('#checkout button').click();const popup=await popupPromise;
- await popup.waitForURL(/wa.me|whatsapp/,{timeout:15000}).catch(()=>{});assert.ok(popup.url().includes('919785795831'));assert.doesNotMatch(await page.locator('#panel-content').innerText(),/Sheet|saved|recorded|setup|configuration/i);assert.match(await page.locator('#panel-content').innerText(),/Send your WhatsApp message/);await popup.close();await page.locator('#panel-close').click();
- await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
+ await page.locator('[name="address"]').fill('Test address Jaipur');
+ // Checkout verification: an unknown PIN is rejected, a real PIN is verified, and only then can WhatsApp open.
+ await page.locator('[name="pincode"]').fill('999999');await page.locator('#check-pin').click();
+ await page.waitForFunction(()=>document.querySelector('#pin-status').classList.contains('fail'));
+ assert.equal(await page.locator('#checkout-submit').isDisabled(),true);
+ assert.match(await page.locator('#pin-status').innerText(),/couldn’t find this PIN/);
+ await page.locator('[name="pincode"]').fill('302001');await page.locator('#check-pin').click();
+ await page.waitForFunction(()=>document.querySelector('#pin-status').classList.contains('ok'));
+ assert.match(await page.locator('#pin-status').innerText(),/Jaipur, Rajasthan/);
+ assert.match(await page.locator('#pin-status').innerText(),/Delivery timing and charges will be confirmed on WhatsApp/);
+ assert.equal(await page.locator('#checkout-submit').isEnabled(),true);
+ await page.screenshot({path:`/home/user/noor-new-checkout-${width}.png`});
+ const popupPromise=page.waitForEvent('popup');await page.locator('#checkout-submit').click();const popup=await popupPromise;
+ await popup.waitForURL(/wa.me|whatsapp/,{timeout:15000}).catch(()=>{});assert.ok(popup.url().includes('919785795831'));
+ assert.match(decodeURIComponent(popup.url()),/Delivery PIN verified: Jaipur, Rajasthan/);assert.doesNotMatch(await page.locator('#panel-content').innerText(),/Sheet|saved|recorded|setup|configuration/i);assert.match(await page.locator('#panel-content').innerText(),/Send your WhatsApp message/);await page.locator('#panel-close').click();await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
  assert.equal(await page.locator('#product-page').evaluate(e=>e.hidden),true);
  await page.locator('#advanced-open').click();await page.locator('#filter-stock').check();await page.locator('#reset-filters').click();
  assert.match(await page.locator('#product-count').textContent(),/448/);
  await page.locator('#products a').first().click();await page.locator('#add-form').waitFor();
  await page.reload();await page.locator('#product-page #add-form').waitFor();assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);
- console.log(`PASS ${width}px: new banner, full PDP + deep link/reload/back, gallery, inches/cm chart, sold-out guard, size retention, bag + WhatsApp, no overflow`);
+ console.log(`PASS ${width}px: new banner, full PDP + deep link/reload/back, gallery, inches/cm chart, sold-out guard, size retention, bag + verified delivery PIN + WhatsApp, fixed WhatsApp button, no overflow`);
  await browser.close();
 }
 assert.deepEqual(errors,[]);
