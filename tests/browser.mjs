@@ -15,7 +15,7 @@ for(const width of [390,820,1440]){
  await page.route('https://cdn.shopify.com/**',async r=>r.fulfill({contentType:'image/png',body:await readFile('public/assets/mark.png')}));
  await page.goto('http://127.0.0.1:5174');await page.waitForFunction(()=>document.querySelector('#product-count').textContent.includes('448'));
  assert.equal(await page.locator('.hero-copy').count(),0);
- assert.ok((await page.locator('#hero-image').evaluate(img=>img.currentSrc)).includes(width<768?'hero-noor-mobile-v3':width<1024?'hero-noor-tablet-v3':'hero-noor-desktop-v3'));
+ assert.ok((await page.locator('#hero-image').evaluate(img=>img.currentSrc)).includes(width<768?'pussya-banner-mobile-v4':width<1024?'pussya-banner-tablet-v4':'pussya-banner-desktop-v4'));
  await page.screenshot({path:`/home/user/noor-new-home-${width}.png`});
  assert.equal(await page.locator('.home-rail').count(),5);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`home overflow at ${width}`);

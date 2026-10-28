@@ -1,4 +1,8 @@
-# Confirmed hero and product-page revision
+# Hero and product-page revision history
+
+**Latest request supersedes the hero selection below:** all banner files now come unchanged from `mystorebyme/pussya-product`, branch `arena/f2c07741-pussya-product`, `apps/web/public/images/banners/`. Desktop/tablet/fluid are 1672×941; mobile is 1080×608. They use versioned `pussya-banner-*-v4.webp` filenames. The three `hero-noor-*-v3.webp` files and superseded `banner-*.webp` files were deleted. HTML, snapshot and the actual Sheet Settings were updated. File hashes were compared against the requested source, and responsive browser checks passed at 390/820/1440px. The source repo intentionally uses the same poster composition at all breakpoints, not the previous three-panel artwork.
+
+The previous selection below is historical; the product-page and size-chart work remains in place.
 
 ## Hero artwork selection
 

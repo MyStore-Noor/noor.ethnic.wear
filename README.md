@@ -14,7 +14,7 @@ npm run build
 ## This revision
 
 - **448 products, 2,904 photo URLs**, all source prices, size pricing/availability, descriptions, colours and memberships.
-- Original Noor image-only hero with desktop/tablet/mobile image sources, including the original portrait poster on phones.
+- Original Noor image-only hero with desktop/tablet/mobile image sources, using the original Pussya reference banner files on all devices.
 - Source-style category circles and Trending, curated Best Sellers, New Arrivals, Lehenga Choli and Explore rails.
 - Advanced collection, colour, size, fabric, price and availability filters; search, sorting, wishlist and persistent shopping bag.
 - Thumbnail gallery, previous/next, swipe, keyboard navigation, hover zoom, full-screen viewer, colour-linked products, quantity, buy now, share, detail/shipping/returns accordions.
@@ -48,4 +48,4 @@ Current-branch push triggers `.github/workflows/pages.yml`. GitHub Pages enablem
 
 ## Latest product-page fix
 
-The owner-confirmed Noor three-layout artwork is now used, with independent device-specific files and Sheet paths. Product details now have a dedicated full-page hash route, separate from shopping/help modals. A Saga-inspired size chart provides inches/cm, source-label measurements, sold-out states and a measuring illustration without inventing garment dimensions. See [HERO-PDP-REVISION](docs/HERO-PDP-REVISION.md).
+The hero now uses the exact desktop, tablet, mobile and fluid banner files from the requested Pussya branch. The previous three-panel artwork files have been deleted, and HTML plus Sheet paths point to the new versioned files. Product details now have a dedicated full-page hash route, separate from shopping/help modals. A Saga-inspired size chart provides inches/cm, source-label measurements, sold-out states and a measuring illustration without inventing garment dimensions. See [HERO-PDP-REVISION](docs/HERO-PDP-REVISION.md).
