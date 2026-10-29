@@ -5,7 +5,8 @@
 - GitHub Pages is enabled for this repository and publishes the **branch root** (`build_type: legacy`).
 - Because the app is plain ES modules, the published root is the real storefront: `index.html`, `style.css`, `src/`, plus a byte-identical mirror of the runtime files in `public/` (`assets/`, `config.json`, `store-snapshot.json`, `pincode-map.json`) and a `.nojekyll` marker so Pages does not run Jekyll.
 - `npm run sync:pages` refreshes that mirror; `tests/pages-root.test.js` fails the build if it drifts, so the live site can never silently serve stale data or images.
-- The workflow **builds, tests and then verifies the live URL**: it waits for the branch deployment and compares the served `index.html`, `src/app.js` and `store-snapshot.json` with the commit, plus the PIN list and hero asset.
+- The workflow **builds, tests and then verifies the live URL**: it waits for the branch deployment and compares the served `index.html`, `src/app.js` and `store-snapshot.json` with the commit, plus the PIN list and hero asset. Verified green on run `40926831766` at commit `086cdbf` (live `savedAt` matched, 448 products, 19,486 PINs, hero banner 200).
+- Live URL: <https://mystore-noor.github.io/noor.ethnic.wear/>
 - If the repository is ever switched to the “GitHub Actions” Pages source, the same workflow detects it and deploys the built `dist/` through `actions/deploy-pages` instead.
 
 ## Done
