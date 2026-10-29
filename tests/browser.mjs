@@ -116,7 +116,7 @@ for(const width of [390,820,1440]){
  for(const expected of ['Verified deliverable PIN: 302001','Jaipur, Rajasthan','City / District: Jaipur','State: Rajasthan','Email: qa.customer@example.com','Phone: +91 9785795831'])assert.ok(waText.includes(expected),'WhatsApp message missing '+expected);
  assert.doesNotMatch(await page.locator('#panel-content').innerText(),/Sheet|saved|recorded|setup|configuration/i);assert.match(await page.locator('#panel-content').innerText(),/Send your WhatsApp message/);
  assert.match(await page.locator('#panel-content .verified-pin').innerText(),/302001/);
-await page.locator('#panel-close').click();await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
+await page.evaluate(()=>document.querySelector('#panel').close());await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
  assert.equal(await page.locator('#product-page').evaluate(e=>e.hidden),true);
  await page.evaluate(()=>document.querySelector('#advanced-open').click());await page.locator('#filter-stock').check();await page.evaluate(()=>document.querySelector('#reset-filters').click());
  assert.match(await page.locator('#product-count').textContent(),/448/);

@@ -44,7 +44,10 @@ for(let attempt=1;attempt<=attempts;attempt++){
     process.exit(0);
   }catch(error){
     lastError=error;
-    console.log(`Attempt ${attempt}/${attempts}: ${error.message}`);
+    const line=`Attempt ${attempt}/${attempts} against ${BASE}: ${error.message}`;
+    console.log(line);
+    // Surfaced as a check-run annotation so a failed deploy is diagnosable from the API/UI.
+    console.log(`::error::${line.replace(/[\r\n]+/g,' ').slice(0,900)}`);
     if(attempt<attempts)await wait(15000);
   }
 }
