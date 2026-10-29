@@ -29,7 +29,7 @@ for(let attempt=1;attempt<=attempts;attempt++){
     let count=0;for(const districts of Object.values(pins))for(const list of Object.values(districts))count+=list.length;
     if(count<19000)throw Error(`live PIN list is incomplete (${count})`);
     const html=await get('index.html',{json:false});
-    for(const marker of ['wa-fab','checkout-city','pussya-banner-mobile-v4.webp'])if(!html.includes(marker))throw Error(`live index.html is missing ${marker}`);
+    for(const marker of ['wa-fab','pussya-banner-mobile-v4.webp','app.js'])if(!html.includes(marker))throw Error(`live index.html is missing ${marker}`);
     const committedHtml=await readFile('index.html','utf8');
     if(html.trim()!==committedHtml.trim())throw Error('live index.html is older than this commit');
     const liveApp=await get('src/app.js',{json:false});
