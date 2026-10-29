@@ -5,6 +5,7 @@ import {readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {normalizeProduct,productMatches} from '../src/store.js';
 const snapshot=JSON.parse(await readFile('public/store-snapshot.json','utf8'));
+const BASE=process.env.QA_BASE||'http://127.0.0.1:5174';
 const errors=[];
 for(const width of [390,820,1440]){
  const browser=await playwright.launch({executablePath:await chromium.executablePath(),args:chromium.args,headless:true});
@@ -13,7 +14,9 @@ for(const width of [390,820,1440]){
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.route('https://docs.google.com/**',r=>r.abort());
  await page.route('https://cdn.shopify.com/**',async r=>r.fulfill({contentType:'image/png',body:await readFile('public/assets/mark.png')}));
- await page.goto('http://127.0.0.1:5174');await page.waitForFunction(()=>document.querySelector('#product-count').textContent.includes('448'));
+ await page.goto(BASE);
+ // Smooth scrolling is a product feature; QA scrolls instantly so element positions stay stable.
+ await page.addStyleTag({content:'html{scroll-behavior:auto!important}'});await page.waitForFunction(()=>document.querySelector('#product-count').textContent.includes('448'));
  assert.equal(await page.locator('.hero-copy').count(),0);
  assert.ok((await page.locator('#hero-image').evaluate(img=>img.currentSrc)).includes(width<768?'pussya-banner-mobile-v4':width<1024?'pussya-banner-tablet-v4':'pussya-banner-desktop-v4'));
  await page.screenshot({path:`/home/user/noor-new-home-${width}.png`});
@@ -115,7 +118,7 @@ for(const width of [390,820,1440]){
  assert.match(await page.locator('#panel-content .verified-pin').innerText(),/302001/);
 await page.locator('#panel-close').click();await page.locator('#product-back').click();await page.locator('#advanced-open').waitFor({state:'visible'});
  assert.equal(await page.locator('#product-page').evaluate(e=>e.hidden),true);
- await page.locator('#advanced-open').click();await page.locator('#filter-stock').check();await page.locator('#reset-filters').click();
+ await page.evaluate(()=>document.querySelector('#advanced-open').click());await page.locator('#filter-stock').check();await page.evaluate(()=>document.querySelector('#reset-filters').click());
  assert.match(await page.locator('#product-count').textContent(),/448/);
  await page.locator('#products a').first().click();await page.locator('#add-form').waitFor();
  await page.reload();await page.locator('#product-page #add-form').waitFor();assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);

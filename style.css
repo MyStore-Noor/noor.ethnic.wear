@@ -78,3 +78,21 @@
 .checkout .pin-check .chip{background:var(--wine);color:#fff;border-color:var(--wine);padding:11px 18px;letter-spacing:.4px}
 .checkout .pin-check .chip:hover{background:#53222c;border-color:#53222c}
 .checkout .pin-check .chip[disabled]{opacity:.6}
+/* Premium loading, reveal and navigation affordances. */
+.skeleton-card{display:grid;gap:10px}
+.skeleton-media{display:block;aspect-ratio:3/4;background:linear-gradient(100deg,#efe6d6 20%,#f8f1e4 38%,#efe6d6 56%);background-size:220% 100%;animation:skeletonSweep 1.5s ease-in-out infinite;border-radius:2px}
+.skeleton-line{display:block;height:9px;border-radius:20px;background:#efe6d6}
+.skeleton-line.short{width:55%}
+@keyframes skeletonSweep{0%{background-position:130% 0}100%{background-position:-30% 0}}
+.js-reveal [data-reveal]{opacity:0;transform:translateY(16px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.js-reveal [data-reveal].is-visible{opacity:1;transform:none}
+.to-top{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:calc(max(18px,env(safe-area-inset-bottom)) + 70px);z-index:59;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fffdf8;border:1px solid var(--line);color:var(--wine);box-shadow:0 10px 24px #0000001a;transition:transform .2s ease,box-shadow .2s ease}
+.to-top svg{width:18px;height:18px}
+.to-top:hover{transform:translateY(-2px);box-shadow:0 14px 28px #00000024}
+.product-card a:focus-visible{outline-offset:3px}
+.product-card h3 a{background-image:linear-gradient(currentColor,currentColor);background-size:0 1px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .35s ease}
+.product-card:hover h3 a{background-size:100% 1px}
+.price{font-variant-numeric:tabular-nums}
+img.image-fallback{object-fit:contain;background:#f2e8d8;padding:12%}
+@media(max-width:760px){.to-top{bottom:calc(max(14px,env(safe-area-inset-bottom)) + 64px);width:38px;height:38px}}
+@media(prefers-reduced-motion:reduce){.skeleton-media{animation:none}.js-reveal [data-reveal]{opacity:1;transform:none}}

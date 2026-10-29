@@ -56,18 +56,11 @@ HomeSections rows: change `title`, `subtitle`, `collection`, `count` or `active`
 
 Browser automation is now available and passed at 390/820/1440px with external services mocked. Earlier note about no browser verification describes the first revision, not the latest tests. Live Sheet writes/real-device performance still need authorization and real-service testing.
 
-## Publishing status (verified 2026-10-28)
+## Publishing status (updated)
 
-The Pages workflow builds and passes tests, but **GitHub Pages is not enabled on this repository**, so
-`actions/configure-pages` stops with `Resource not accessible by integration` and no live URL exists yet.
-The connected GitHub token is a GitHub App installation without Pages administration rights, so it cannot
-create the site through the API.
+GitHub Pages is enabled and publishes this branch root in **legacy** mode. The run-time files that Vite normally serves from `public/` are mirrored to the root, so the published site is the real storefront.
 
-Owner action (one time): open <https://github.com/MyStore-Noor/noor.ethnic.wear/settings/pages>, set
-**Build and deployment → Source: GitHub Actions**, then re-run the latest **Deploy Noor to GitHub Pages**
-workflow. If the connected GitHub account in Arena can be reconnected with repository-admin/Pages scope,
-the agent can enable it and verify the live URL directly.
-
-The production `dist/` output was also served from a sub-path (`/noor.ethnic.wear/`) and checked in a browser:
-all 448 products, the WhatsApp button and PIN verification loaded without errors, so the build is
-Pages-ready as soon as the site is enabled.
+- Refresh the mirror after any `public/` change: `npm run sync:pages`
+- The mirror is verified by `tests/pages-root.test.js`, so CI fails on drift.
+- The workflow builds, tests and then checks the live URL (served `index.html`, `src/app.js`, snapshot, PIN list and hero image) before reporting success.
+- If Pages is switched to the “GitHub Actions” source, the workflow automatically deploys `dist/` with `actions/deploy-pages` instead.

@@ -1,18 +1,25 @@
-name: Deploy Noor to GitHub Pages
+name: Build, verify and publish Noor storefront
+
 on:
   push:
     branches: [main, arena/5beb3e1b-noor-ethnic-wear]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      pages_mode: ${{ steps.pages.outputs.mode }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,29 +27,61 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm test
-      - run: node scripts/snapshot.mjs
+      - name: Unit, catalog, delivery and Pages-root tests
+        run: npm test
+      - name: Refresh Sheet snapshot when a bridge is configured
+        run: node scripts/snapshot.mjs
         env:
           SHEETS_WEBAPP_URL: ${{ vars.SHEETS_WEBAPP_URL }}
-      - run: npm run build
-      - name: Configure custom domain if supplied
+      - name: Production build
+        run: npm run build
+      - name: Custom domain (optional)
         env:
           CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
         run: |
           if [ -n "$CUSTOM_DOMAIN" ]; then printf '%s\n' "$CUSTOM_DOMAIN" > dist/CNAME; fi
-      - uses: actions/configure-pages@v5
+      - name: Keep the build for download
+        uses: actions/upload-artifact@v4
         with:
-          enablement: true
+          name: noor-storefront-build
+          path: dist
+          retention-days: 14
+      - name: Detect how GitHub Pages publishes this repository
+        id: pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mode=none
+          if info=$(gh api "repos/$GITHUB_REPOSITORY/pages" 2>/dev/null); then
+            mode=$(printf '%s' "$info" | jq -r '.build_type // "legacy"')
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "GitHub Pages build type: $mode"
+      - uses: actions/configure-pages@v5
+        if: steps.pages.outputs.mode == 'workflow'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outputs.mode == 'workflow'
         with:
           path: dist
+      - name: Verify the live site after the branch deployment
+        if: steps.pages.outputs.mode == 'legacy'
+        run: node scripts/check-live.mjs
+        env:
+          PAGES_URL: ${{ vars.PAGES_URL || 'https://mystore-noor.github.io/noor.ethnic.wear/' }}
+
   deploy:
     needs: build
+    if: needs.build.outputs.pages_mode == 'workflow'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Publish
+      - uses: actions/checkout@v4
+      - name: Publish to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify the published site
+        run: node scripts/check-live.mjs
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
