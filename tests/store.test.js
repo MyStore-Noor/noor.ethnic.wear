@@ -1,0 +1,32 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {parseCSV,normalizeProduct,orderMessage} from '../src/store.js';
+test('CSV handles commas, quotes, multiline and CRLF',()=>{assert.deepEqual(parseCSV('id,title\r\n1,"a, b"\r\n2,"a ""quote""\nline"'),[{id:'1',title:'a, b'},{id:'2',title:'a "quote"\nline'}]);});
+test('Sheet product types are normalized',()=>{const p=normalizeProduct({id:'1',price:'599',images:'a|b',sizes:'S|M',active:'true',in_stock:'false'});assert.equal(p.price,599);assert.deepEqual(p.sizes,['S','M']);assert.equal(p.in_stock,false);});
+test('WhatsApp message has selected size, quantities and delivery details',()=>{const msg=orderMessage({items:[{title:'Silk set',size:'M',quantity:2,price:499}],total:998,name:'Noor',phone:'9999999999',email:'noor@example.com',address:'12 Johari Bazaar, Jaipur',city:'Jaipur',state:'Rajasthan',pincode:'302001',delivery:{pincode:'302001',district:'Jaipur',state:'Rajasthan',deliveryDays:'',shippingFee:null,verified:true}},{store_name:'Noor Ethnic Wear'});for(const v of ['Noor Ethnic Wear','Silk set','Size: M','Qty: 2','Jaipur','302001','confirm availability','Email: noor@example.com','City / District: Jaipur','State: Rajasthan','Phone: +91 9999999999','Verified deliverable PIN: 302001 · Jaipur, Rajasthan'])assert.ok(msg.includes(v),'missing '+v);});
+
+import {readFileSync} from 'node:fs';
+import {productMatches,variantPrice,truth} from '../src/store.js';
+const snapshot=JSON.parse(readFileSync(new URL('../public/store-snapshot.json',import.meta.url)));
+const additionsDoc=JSON.parse(readFileSync(new URL('../docs/stock-additions.json',import.meta.url),'utf8'));
+const additions=additionsDoc.products;
+const expectedCount=448+additions.length;
+const expectedPhotos=2904+additions.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0);
+test(`Complete current catalog: ${expectedCount} unique products and ${expectedPhotos} photos`,()=>{assert.equal(snapshot.products.length,expectedCount);assert.equal(new Set(snapshot.products.map(p=>p.id)).size,expectedCount);assert.equal(snapshot.products.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0),expectedPhotos);});
+test('CSV import preserves all full-catalog fields',()=>{const rows=parseCSV(readFileSync(new URL('../docs/catalog-import.csv',import.meta.url),'utf8'));assert.equal(rows.length,expectedCount);for(let i=0;i<rows.length;i++){assert.equal(rows[i].id,snapshot.products[i].id);assert.equal(Number(rows[i].price),snapshot.products[i].price);assert.equal(rows[i].images,snapshot.products[i].images);assert.equal(rows[i].size_pricing,snapshot.products[i].size_pricing);}});
+test('Curated stock additions are complete, local, available and surfaced first',()=>{
+ assert.equal(additions.length,40);
+ assert.deepEqual(snapshot.products.slice(0,additions.length),additions);
+ assert.equal(snapshot.catalogVersion,additionsDoc.version);
+ assert.ok(snapshot.categories.some(c=>c.id==='just-added'));
+ assert.equal(snapshot.homeSections[0].collection,'just-added');
+ for(const p of additions){
+  assert.equal(p.active,'true');assert.equal(p.in_stock,'true');
+  assert.ok(p.collections.split('|').includes('just-added'));
+  assert.match(p.images,/^assets\/stock\/[a-z0-9-]+\.webp$/);
+ }
+});
+test('Collection memberships, aliases and real variants work',()=>{const p=normalizeProduct(snapshot.products[0]);assert.equal(productMatches(p,'just-added'),true);assert.equal(productMatches(p,'all'),true);assert.equal(productMatches(p,'lehnga-choli'),false);const v={...p,size_pricing:{XL:{price:799,compare_price:1599,available:false}}};assert.deepEqual(variantPrice(v,'XL'),{price:799,compare_price:1599});assert.equal(truth('FALSE'),false);});
+test('Source sold-out flags are preserved, not invented stock counts',()=>{assert.equal(snapshot.products.filter(p=>p.in_stock==='false').length,17);const p=normalizeProduct(snapshot.products[additions.length]);assert.ok(p.sizes.includes('L [40]'));assert.equal(p.size_pricing['L [40]'].available,false);});
+
+import {sizeMeasurements,measurementUnit} from '../src/store.js';
+test('Size chart uses source label values and actual availability',()=>{const p=normalizeProduct(snapshot.products[additions.length]),rows=sizeMeasurements(p);assert.equal(rows.find(r=>r.label==='M [38]').bustInches,38);assert.equal(rows.find(r=>r.label==='L [40]').available,false);assert.equal(measurementUnit(38,'cm'),'96.5 cm');assert.equal(measurementUnit(34,'in'),'34 in');});
+test('Size chart does not invent dimensions for free size',()=>{assert.equal(sizeMeasurements({sizes:['Free Size'],in_stock:true,size_pricing:{}})[0].bustInches,null);assert.equal(measurementUnit(null,'cm'),'Not supplied');});
