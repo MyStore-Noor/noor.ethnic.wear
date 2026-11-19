@@ -7,7 +7,8 @@
     "build": "vite build && node scripts/write-build-info.mjs",
     "test": "node --test tests/*.test.js",
     "sync:pages": "node scripts/sync-pages.mjs",
-    "catalog:rebuild": "node scripts/rebuild-catalog.mjs"
+    "catalog:rebuild": "node scripts/rebuild-catalog.mjs",
+    "qa:browser": "AWS_EXECUTION_ENV=AWS_Lambda_nodejs22.x node tests/browser.mjs"
   },
   "devDependencies": {
     "vite": "^6.4.1"

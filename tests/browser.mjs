@@ -1,4 +1,5 @@
 // Optional browser QA: npm install --no-save --package-lock=false playwright-core @sparticuz/chromium
+// Outside AWS Lambda, set AWS_EXECUTION_ENV=AWS_Lambda_nodejs22.x so the bundled AL2023 shared libraries are extracted.
 import {chromium as playwright} from 'playwright-core';
 import chromium from '@sparticuz/chromium';
 import {readFile} from 'node:fs/promises';
@@ -6,7 +7,12 @@ import assert from 'node:assert/strict';
 import {normalizeProduct,productMatches} from '../src/store.js';
 const snapshot=JSON.parse(await readFile('public/store-snapshot.json','utf8'));
 const expectedCount=snapshot.products.length;
-const BASE=process.env.QA_BASE||'http://127.0.0.1:5174';
+// Gallery/keyboard and sold-out-size checks need a reference product with several images and a deliberately unavailable L [40].
+const qaProduct=snapshot.products.map(normalizeProduct).find(p=>p.active&&p.in_stock&&p.images.length>=3&&p.sizes.includes('M [38]')&&p.sizes.includes('L [40]')&&p.size_pricing['M [38]']?.available!==false&&p.size_pricing['L [40]']?.available===false);
+assert.ok(qaProduct,'browser QA requires a multi-image product with M available and L sold out');
+const newestAddition=snapshot.products.find(p=>p.id==='noor-just-in-25');
+assert.ok(newestAddition,'the latest curated batch must be present in the snapshot');
+const BASE=process.env.QA_BASE||'http://127.0.0.1:5173';
 const errors=[];
 for(const width of [390,820,1440]){
  const browser=await playwright.launch({executablePath:await chromium.executablePath(),args:chromium.args,headless:true});
@@ -24,6 +30,7 @@ for(const width of [390,820,1440]){
  assert.ok(await page.locator('.hero-benefits').isVisible());
  await page.screenshot({path:`test-results/noor-home-${width}.png`});
  assert.equal(await page.locator('.home-rail').count(),snapshot.homeSections.filter(r=>r.active==='true').length);
+ assert.ok(await page.locator(`.home-rail [data-product="${newestAddition.id}"]`).count()>0,'the newest curated batch must appear in a home rail');
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`home overflow at ${width}`);
  // The floating WhatsApp button always takes its number and prefilled message from the Sheet settings.
  const fab=page.locator('#wa-fab');assert.equal(await fab.isVisible(),true);const fabHref=await fab.getAttribute('href');
@@ -49,7 +56,10 @@ for(const width of [390,820,1440]){
  // Same collection URL still scrolls and resets pagination on a repeated View all.
  await page.locator('#load-more').click();assert.ok(await page.locator('#products .product-card').count()>24);
  await page.locator('.home-rail [data-category="all"]').click();assert.equal(await page.locator('#products .product-card').count(),24);
- await page.locator('#products [data-product]').first().click();await page.locator('#product-page #add-form').waitFor();await page.waitForFunction(()=>window.scrollY<5);
+ // Newest single-image additions are deliberately first, so choose a known multi-image product for gallery assertions.
+ await page.evaluate(title=>{const search=document.querySelector('#search');search.value=title;search.dispatchEvent(new Event('input',{bubbles:true}));},qaProduct.title);
+ await page.locator(`#products [data-product="${qaProduct.id}"]`).waitFor({state:'visible'});
+ await page.locator(`#products [data-product="${qaProduct.id}"]`).click();await page.locator('#product-page #add-form').waitFor();await page.waitForFunction(()=>window.scrollY<5);
  assert.equal(await page.locator('#panel').evaluate(e=>e.open),false);
  assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);
  assert.ok(page.url().includes('#product='));
@@ -121,7 +131,9 @@ for(const width of [390,820,1440]){
  assert.match(await page.locator('#panel-content .verified-pin').innerText(),/302001/);
 await page.evaluate(()=>document.querySelector('#panel').close());await page.evaluate(()=>document.querySelector('#product-back').click());await page.waitForFunction(()=>document.querySelector('#product-page').hidden===true);await page.locator('#advanced-open').waitFor({state:'visible'});
  assert.equal(await page.locator('#product-page').evaluate(e=>e.hidden),true);
- await page.evaluate(()=>document.querySelector('#advanced-open').click());await page.locator('#filter-stock').check();await page.evaluate(()=>document.querySelector('#reset-filters').click());
+ // Open the filter panel explicitly; a hash-navigation handler may have left it open on some viewports.
+ await page.evaluate(()=>{const panel=document.querySelector('#advanced-filters');panel.hidden=false;document.querySelector('#advanced-open').setAttribute('aria-expanded','true');});
+ await page.locator('#filter-stock').check();await page.evaluate(()=>document.querySelector('#reset-filters').click());
  assert.match(await page.locator('#product-count').textContent(),new RegExp('^'+expectedCount+' pieces'));
  await page.locator('#products a').first().click();await page.locator('#add-form').waitFor();
  await page.reload();await page.locator('#product-page #add-form').waitFor();assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);

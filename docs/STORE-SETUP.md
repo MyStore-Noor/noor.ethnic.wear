@@ -56,7 +56,7 @@ Settings `show_categories`, `show_home_rails`, `show_story`, `show_service_strip
 
 HomeSections rows: change `title`, `subtitle`, `collection`, `count` or `active`. Product rows additionally support `collections` (pipe-separated), `size_pricing` (JSON in rupees), `colour_group`, `details` (pipe-separated) and `published_at`.
 
-The optional browser automation script covers 390/820/1440px with external services mocked. In the current sandbox its bundled Chromium could not launch because the system library `libnspr4.so` is missing, so this revision was verified with unit tests, a production build and the live deployment manifest instead. Live Sheet writes and real-device performance still need authorization and real-service testing.
+The optional `npm run qa:browser` script passed at 390/820/1440px with external services mocked. It verifies the latest stock batch, uploaded hero, gallery, responsive PDP, size chart, bag, PIN delivery and WhatsApp flow; on non-Linux-Lambda hosts the script sets `AWS_EXECUTION_ENV` so @sparticuz/chromium extracts its AL2023 shared libraries. Unit tests, a production build, the Pages Action and the live deployment manifest also passed for this revision. Live Sheet writes and real-device performance still need authorization and real-service testing.
 
 ## Publishing status (updated)
 
