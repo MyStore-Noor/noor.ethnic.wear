@@ -2,9 +2,9 @@
 
 ## Current revision — 19 November 2026
 
-- Website snapshot: **472 unique products**, **2,928 non-empty image URLs** and catalog version **`noor-472-v3`**.
-- This is the original 448-product / 2,904-photo Tannu reference plus 24 curated in-stock additions. The additions are documented in [STOCK-ADDITIONS.md](STOCK-ADDITIONS.md) and stored locally as optimised WebP images.
-- `docs/catalog-import.csv` contains all 472 rows. `scripts/Code.gs` imports the current seed from this branch and sets `catalog_version` to `noor-472-v3`.
+- Website snapshot: **488 unique products**, **2,944 non-empty image URLs** and catalog version **`noor-488-v4`**.
+- This is the original 448-product / 2,904-photo Tannu reference plus 40 curated in-stock additions in two batches. The additions are documented in [STOCK-ADDITIONS.md](STOCK-ADDITIONS.md) and stored locally as optimised WebP images.
+- `docs/catalog-import.csv` contains all 488 rows. `scripts/Code.gs` imports the current seed from this branch and sets `catalog_version` to `noor-488-v4`.
 - The website already displays the complete local snapshot. The live private-Sheet bridge and order writes still require the owner's Apps Script deployment; this is not a claim that live Sheet sync has been verified.
 - Current categories: the 11 source collections plus **Just Added**. Current home rails: the five source-style rails plus **Just Added**.
 
@@ -36,11 +36,11 @@ Open [CatalogImport A1](https://docs.google.com/spreadsheets/d/1UlPFsN1aL1OIi_5t
 
 Once Google authorizes and imports the current public CSV:
 
-1. `CatalogImport` fills 472 product rows plus headers from `docs/catalog-import.csv`.
-2. `Products` references all 472 rows. Until import is ready the website continues to use the committed snapshot.
-3. Settings `catalog_version` changes from `pending-import` to `noor-472-v3` after all 472 handles arrive.
-4. To make each product directly editable, copy Products `A1:Q473`, then **Edit > Paste special > Values only** into the same range. Alternatively use `Noor Store > Make imported products editable` after installing `scripts/Code.gs`.
-5. Keep the version marker `noor-472-v3` after materializing. Later product additions or removals do not require a fixed 472-row count.
+1. `CatalogImport` fills 488 product rows plus headers from `docs/catalog-import.csv`.
+2. `Products` references all 488 rows. Until import is ready the website continues to use the committed snapshot.
+3. Settings `catalog_version` changes from `pending-import` to `noor-488-v4` after all 488 handles arrive.
+4. To make each product directly editable, copy Products `A1:Q489`, then **Edit > Paste special > Values only** into the same range. Alternatively use `Noor Store > Make imported products editable` after installing `scripts/Code.gs`.
+5. Keep the version marker `noor-488-v4` after materializing. Later product additions or removals do not require a fixed 488-row count.
 
 Alternative: run `importAllReferenceProducts` in the authorized bound Apps Script. It validates the current seed, takes a backup, and imports editable values directly. It is never exposed as an anonymous HTTP action.
 

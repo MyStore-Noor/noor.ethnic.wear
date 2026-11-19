@@ -22,7 +22,7 @@ for(const width of [390,820,1440]){
  assert.ok((await page.locator('#hero-image').evaluate(img=>img.currentSrc)).includes('noor-diwali-hero.webp'));
  assert.equal(await page.locator('#hero-desktop').count(),0);assert.equal(await page.locator('#hero-tablet').count(),0);
  assert.ok(await page.locator('.hero-benefits').isVisible());
- await page.screenshot({path:`/home/user/noor-new-home-${width}.png`});
+ await page.screenshot({path:`test-results/noor-home-${width}.png`});
  assert.equal(await page.locator('.home-rail').count(),snapshot.homeSections.filter(r=>r.active==='true').length);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`home overflow at ${width}`);
  // The floating WhatsApp button always takes its number and prefilled message from the Sheet settings.
@@ -54,7 +54,7 @@ for(const width of [390,820,1440]){
  assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);
  assert.ok(page.url().includes('#product='));
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`PDP overflow at ${width}`);
- await page.waitForTimeout(200);assert.ok(await page.locator('.gallery-main').isVisible());await page.screenshot({path:`/home/user/noor-new-product-${width}.png`});
+ await page.waitForTimeout(200);assert.ok(await page.locator('.gallery-main').isVisible());await page.screenshot({path:`test-results/noor-product-${width}.png`});
  assert.ok(await page.locator('[data-gallery-index]').count()>1);await page.locator('[data-gallery-step="1"]').click();
  assert.match(await page.locator('#gallery-count').textContent(),/^2 \/ /);
  await page.keyboard.press('ArrowRight');assert.match(await page.locator('#gallery-count').textContent(),/^3 \/ /);
@@ -69,7 +69,7 @@ for(const width of [390,820,1440]){
  await page.locator('#size-chart-section [data-chart-size="L [40]"]').click();
  assert.equal(await page.locator('#add-form [name="size"]:checked').inputValue(),'M [38]');
  await page.locator('#size-chart-section [data-chart-size="M [38]"]').click();
- await page.screenshot({path:`/home/user/noor-new-size-chart-${width}.png`});
+ await page.screenshot({path:`test-results/noor-size-chart-${width}.png`});
  // A help modal must not destroy the PDP or reset its selected size.
  await page.locator('footer [data-info="size"]').click();await page.locator('#panel .size-guide').waitFor();
  await page.locator('#panel-close').click();assert.equal(await page.locator('#add-form [name="size"]:checked').inputValue(),'M [38]');
@@ -112,7 +112,7 @@ for(const width of [390,820,1440]){
  assert.equal(context.pages().length,1);
  await page.locator('[name="email"]').fill('qa.customer@example.com');
  await page.locator('[name="email"]').blur();
- await page.screenshot({path:`/home/user/noor-new-checkout-${width}.png`});
+ await page.screenshot({path:`test-results/noor-checkout-${width}.png`});
  const popupPromise=page.waitForEvent('popup');await page.locator('#checkout-submit').click();const popup=await popupPromise;
  await popup.waitForURL(/wa.me|whatsapp/,{timeout:15000}).catch(()=>{});assert.ok(popup.url().includes('919785795831'));
  const waText=decodeURIComponent(popup.url());

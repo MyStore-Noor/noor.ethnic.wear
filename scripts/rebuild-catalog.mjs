@@ -4,12 +4,13 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {sync} from './sync-pages.mjs';
 
-const VERSION='noor-472-v3';
 const HEADERS=['id','title','price','compare_price','images','category','sizes','colour','fabric','description','active','in_stock','collections','size_pricing','colour_group','details','published_at'];
 const quote=value=>'"'+String(value??'').replaceAll('"','""')+'"';
 const additionsDoc=JSON.parse(await readFile('docs/stock-additions.json','utf8'));
+const VERSION=additionsDoc.version;
 const additions=additionsDoc.products||[];
-if(additions.length!==24)throw Error(`Expected 24 curated additions, got ${additions.length}`);
+if(!VERSION)throw Error('docs/stock-additions.json is missing its catalog version');
+if(!additions.length)throw Error('No curated additions were found');
 for(const product of additions)if(Object.keys(product).join('|')!==HEADERS.join('|'))throw Error(`Unexpected fields on ${product.id}`);
 
 const snapshot=JSON.parse(await readFile('public/store-snapshot.json','utf8'));

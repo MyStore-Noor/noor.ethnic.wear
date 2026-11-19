@@ -4,7 +4,7 @@ A mobile-first static festive storefront for Anarkali suits, lehenga choli, sare
 
 ## Current revision
 
-- **472 products and 2,928 photos**: the original 448-product / 2,904-photo reference catalog plus **24 curated, in-stock additions**. See [STOCK-ADDITIONS](docs/STOCK-ADDITIONS.md) for image provenance and the important note that this is a curated expansion, not a live inventory feed.
+- **488 products and 2,944 photos**: the original 448-product / 2,904-photo reference catalog plus **40 curated, in-stock additions in two batches**. See [STOCK-ADDITIONS](docs/STOCK-ADDITIONS.md) for image provenance and the important note that this is a curated expansion, not a live inventory feed.
 - **One uploaded hero poster**: `assets/noor-diwali-hero.webp` is an optimised WebP made from the owner's “Up to 75% Off” artwork. The old desktop, tablet, mobile and fluid `pussya-banner-*-v4.webp` files were removed from both `assets/` and `public/assets/`.
 - A real-text, accessible offer strip under the poster repeats **Up to 75% off**, **Secure payment**, **Easy returns** and a Shop the offer link; the whole poster remains clickable.
 - A new **Just Added** category, navigation link and home rail put the new stock first. New cards carry a small “Just in” label.
@@ -28,7 +28,7 @@ npm run catalog:rebuild  # regenerate catalog artifacts from the 448-item base +
 
 `public/store-snapshot.json` is the runtime last-known catalog. `public/catalog-seed.json` and `docs/catalog-import.csv` are regeneration inputs; `docs/stock-additions.json` is the canonical list of curated additions. The root `config.json`, `store-snapshot.json`, `pincode-map.json` and `assets/` mirror `public/` byte for byte, enforced by `tests/pages-root.test.js` and `npm run sync:pages`.
 
-Current catalog version: **`noor-472-v3`**. The storefront uses the committed snapshot unless an authorised Sheet web-app bridge is configured. `scripts/Code.gs` contains the private-Sheet bridge and the 472-row import helper. The Sheet bulk import and live order writes still require the owner's Google authorization; see [IMPORT-STATUS](docs/IMPORT-STATUS.md) and [STORE-SETUP](docs/STORE-SETUP.md).
+Current catalog version: **`noor-488-v4`**. The storefront uses the committed snapshot unless an authorised Sheet web-app bridge is configured. `scripts/Code.gs` contains the private-Sheet bridge and the 488-row import helper. The Sheet bulk import and live order writes still require the owner's Google authorization; see [IMPORT-STATUS](docs/IMPORT-STATUS.md) and [STORE-SETUP](docs/STORE-SETUP.md).
 
 ## Deployment
 
@@ -40,6 +40,6 @@ The workflow supports both publishing modes: in workflow mode it deploys `dist/`
 
 ## Verification
 
-`npm test` covers catalog integrity, CSV regeneration, all curated additions, Pages-root mirroring, stale-banner removal, delivery PINs, customer/order validation, retries and data signatures. `tests/browser.mjs` is optional headless Chromium QA at 390, 820 and 1440px; external Google/CDN/WhatsApp services are mocked there. Actual live Sheet writes, real-device performance and payment collection remain outside this static storefront.
+`npm test` covers catalog integrity, CSV regeneration, all curated additions, Pages-root mirroring, stale-banner removal, delivery PINs, customer/order validation, retries and data signatures. `tests/browser.mjs` is optional headless Chromium QA at 390, 820 and 1440px; external Google/CDN/WhatsApp services are mocked there. In this sandbox the bundled Chromium could not launch because `libnspr4.so` is unavailable, so this revision was verified with unit tests, a production build and the live deployment manifest instead. Actual live Sheet writes, real-device performance and payment collection remain outside this static storefront.
 
 No payment is taken on the site. WhatsApp order requests ask the owner to confirm availability, delivery charges and the final total before payment.

@@ -6,15 +6,16 @@ test('WhatsApp message has selected size, quantities and delivery details',()=>{
 import {readFileSync} from 'node:fs';
 import {productMatches,variantPrice,truth} from '../src/store.js';
 const snapshot=JSON.parse(readFileSync(new URL('../public/store-snapshot.json',import.meta.url)));
-const additions=JSON.parse(readFileSync(new URL('../docs/stock-additions.json',import.meta.url),'utf8')).products;
+const additionsDoc=JSON.parse(readFileSync(new URL('../docs/stock-additions.json',import.meta.url),'utf8'));
+const additions=additionsDoc.products;
 const expectedCount=448+additions.length;
 const expectedPhotos=2904+additions.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0);
 test(`Complete current catalog: ${expectedCount} unique products and ${expectedPhotos} photos`,()=>{assert.equal(snapshot.products.length,expectedCount);assert.equal(new Set(snapshot.products.map(p=>p.id)).size,expectedCount);assert.equal(snapshot.products.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0),expectedPhotos);});
 test('CSV import preserves all full-catalog fields',()=>{const rows=parseCSV(readFileSync(new URL('../docs/catalog-import.csv',import.meta.url),'utf8'));assert.equal(rows.length,expectedCount);for(let i=0;i<rows.length;i++){assert.equal(rows[i].id,snapshot.products[i].id);assert.equal(Number(rows[i].price),snapshot.products[i].price);assert.equal(rows[i].images,snapshot.products[i].images);assert.equal(rows[i].size_pricing,snapshot.products[i].size_pricing);}});
 test('Curated stock additions are complete, local, available and surfaced first',()=>{
- assert.equal(additions.length,24);
+ assert.equal(additions.length,40);
  assert.deepEqual(snapshot.products.slice(0,additions.length),additions);
- assert.equal(snapshot.catalogVersion,'noor-472-v3');
+ assert.equal(snapshot.catalogVersion,additionsDoc.version);
  assert.ok(snapshot.categories.some(c=>c.id==='just-added'));
  assert.equal(snapshot.homeSections[0].collection,'just-added');
  for(const p of additions){

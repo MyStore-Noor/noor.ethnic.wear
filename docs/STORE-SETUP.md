@@ -1,6 +1,6 @@
 # Noor store, Sheet kaise chalegi
 
-> Current revision (19 November 2026): website me 472 products hain (448 reference + 24 curated additions), uploaded Diwali poster ek hi hero image hai, aur GitHub Pages current branch se Actions workflow ke through publish hoti hai. Purane 448 / legacy-mode notes niche historical context ke liye hain.
+> Current revision (19 November 2026): website me 488 products hain (448 reference + 40 curated additions in two batches), uploaded Diwali poster ek hi hero image hai, aur GitHub Pages current branch se Actions workflow ke through publish hoti hai. Purane 448 / legacy-mode notes niche historical context ke liye hain.
 
 ## 1. Aapki Sheet
 
@@ -15,7 +15,7 @@ Settings me WhatsApp number `919785795831` configured hai (sirf digits). Agar nu
 - OrderItems: har request ki alag items.
 - Reviews/Coupons: future extension, abhi storefront me enabled nahi.
 
-Current website catalog me 472 products hain. Sheet me poora catalog lane ke liye Products tab select karein, File > Import > Upload > `docs/catalog-import.csv` > Replace current sheet. Puri spreadsheet replace mat karein. Prices, product rights, images aur availability launch se pehle verify karein.
+Current website catalog me 488 products hain. Sheet me poora catalog lane ke liye Products tab select karein, File > Import > Upload > `docs/catalog-import.csv` > Replace current sheet. Puri spreadsheet replace mat karein. Prices, product rights, images aur availability launch se pehle verify karein.
 
 ## 2. Private Sheet bridge, recommended
 
@@ -50,13 +50,13 @@ Build aur CSV/product/message unit tests pass hain. Sandbox network Google endpo
 
 ## Updated: full-catalog revision
 
-The first-version four-product instructions above are superseded by [IMPORT-STATUS.md](IMPORT-STATUS.md): the website export contains 448 source products plus 24 curated additions, while the actual Sheet bulk import awaits Google's desktop **Allow access** permission. WhatsApp is configured in the local settings using the supplied owner number.
+The first-version four-product instructions above are superseded by [IMPORT-STATUS.md](IMPORT-STATUS.md): the website export contains 448 source products plus 40 curated additions in two batches, while the actual Sheet bulk import awaits Google's desktop **Allow access** permission. WhatsApp is configured in the local settings using the supplied owner number.
 
 Settings `show_categories`, `show_home_rails`, `show_story`, `show_service_strip`, `show_closing`: `false` hides a section, `true` shows it. The extra hero copy has been removed outright. `hero_image` is the single uploaded poster and `hero_alt` supplies its accessible description; the old tablet/mobile image keys no longer exist. The poster is shown uncropped at its own aspect ratio. Poster artwork includes the owner's printed offer/payment/return statements; the site itself only makes WhatsApp order requests, so confirm your policy and poster claims before launch.
 
 HomeSections rows: change `title`, `subtitle`, `collection`, `count` or `active`. Product rows additionally support `collections` (pipe-separated), `size_pricing` (JSON in rupees), `colour_group`, `details` (pipe-separated) and `published_at`.
 
-Browser automation is now available and passed at 390/820/1440px with external services mocked. Earlier note about no browser verification describes the first revision, not the latest tests. Live Sheet writes/real-device performance still need authorization and real-service testing.
+The optional browser automation script covers 390/820/1440px with external services mocked. In the current sandbox its bundled Chromium could not launch because the system library `libnspr4.so` is missing, so this revision was verified with unit tests, a production build and the live deployment manifest instead. Live Sheet writes and real-device performance still need authorization and real-service testing.
 
 ## Publishing status (updated)
 

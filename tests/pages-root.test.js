@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFile,access,readdir} from 'node:fs/promises';
 import {compare,FILES,DIRS} from '../scripts/sync-pages.mjs';
 
-const additions=JSON.parse(await readFile('docs/stock-additions.json','utf8')).products;
+const additionsDoc=JSON.parse(await readFile('docs/stock-additions.json','utf8'));
+const additions=additionsDoc.products;
 const expectedCount=448+additions.length;
 
 test('GitHub Pages root mirrors the public runtime files byte for byte',async()=>{
@@ -33,7 +34,7 @@ test('Published snapshot and PIN list are complete, with no old responsive banne
   const snapshot=JSON.parse(await readFile('store-snapshot.json','utf8'));
   assert.equal(snapshot.products.length,expectedCount);
   assert.equal(new Set(snapshot.products.map(p=>p.id)).size,expectedCount);
-  assert.equal(snapshot.catalogVersion,'noor-472-v3');
+  assert.equal(snapshot.catalogVersion,additionsDoc.version);
   assert.equal(snapshot.settings.hero_image,'assets/noor-diwali-hero.webp');
   assert.equal(snapshot.settings.hero_image_mobile,undefined);
   assert.equal(snapshot.settings.hero_image_tablet,undefined);
