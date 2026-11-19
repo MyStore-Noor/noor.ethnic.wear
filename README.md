@@ -34,7 +34,7 @@ Current catalog version: **`noor-472-v3`**. The storefront uses the committed sn
 
 Live URL: <https://mystore-noor.github.io/noor.ethnic.wear/>
 
-The Pages environment uses the **GitHub Actions** build type. Pushes to `main` or `arena/c9f0b6fe-noor-ethnic-wear`, plus manual `workflow_dispatch`, trigger `.github/workflows/pages.yml`. The current branch is registered in the `github-pages` environment's deployment branch policy. An optional `CUSTOM_DOMAIN` Actions variable writes `dist/CNAME`; no unverified domain has been assumed.
+The Pages site uses the **GitHub Actions** build type. Pushes to `main` or `arena/c9f0b6fe-noor-ethnic-wear`, plus manual `workflow_dispatch`, trigger `.github/workflows/pages.yml`. The deploy job targets a dedicated `noor-pages` environment because the older `github-pages` environment has a branch allowlist that the current integration cannot edit. An optional `CUSTOM_DOMAIN` Actions variable writes `dist/CNAME`; no unverified domain has been assumed.
 
 The workflow supports both publishing modes: in workflow mode it deploys `dist/`, and in legacy branch-root mode it verifies the served source files. Verification retries until the new snapshot, build manifest, hero image and full PIN list are live.
 

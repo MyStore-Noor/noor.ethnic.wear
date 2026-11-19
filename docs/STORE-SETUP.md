@@ -34,7 +34,7 @@ Apps Script public order endpoint me product/size/quantity/price validation, for
 
 ## 3. GitHub Pages + Actions
 
-Repo Settings > Pages > Build and deployment > Source: GitHub Actions. Current branch push ya manual workflow run deployment karega. `github-pages` environment ki deployment branch policy me current `arena/c9f0b6fe-noor-ethnic-wear` branch allowed hai. Relative assets project Pages URL aur custom domain dono par kaam karte hain.
+Repo Settings > Pages > Build and deployment > Source: GitHub Actions. Current branch push ya manual workflow run deployment karega. Purane `github-pages` environment me legacy branch allowlist hai jise integration edit nahi kar sakta, isliye workflow dedicated `noor-pages` environment target karta hai — kisi doosri branch par push kiye bina current branch publish hoti hai. Relative assets project Pages URL aur custom domain dono par kaam karte hain.
 
 Apne domain ke liye Actions variable `CUSTOM_DOMAIN` me sirf domain daalein, protocol/path nahi. DNS provider par GitHub Pages ke current documented A records / www CNAME set karein, Pages me domain verify karein aur Enforce HTTPS enable karein. Domain abhi user se confirm hona baaki hai; existing website ka domain bina confirmation change nahi kiya gaya.
 

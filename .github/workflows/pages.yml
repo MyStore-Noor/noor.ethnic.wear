@@ -76,8 +76,11 @@ jobs:
     if: needs.build.outputs.pages_mode == 'workflow'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # The pre-existing github-pages environment has a legacy branch allowlist
+    # that this integration cannot edit. A dedicated environment lets the active
+    # working branch publish through Actions without deploying from another branch.
     environment:
-      name: github-pages
+      name: noor-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
