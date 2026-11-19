@@ -9,7 +9,7 @@ function json_(value){return ContentService.createTextOutput(JSON.stringify(valu
 function doGet(e){
   try {
     if(e.parameter.action!=='catalog')return json_({ok:true,service:'Noor Store Sheet Bridge'});
-    var allowed=['store_name','announcement','whatsapp','support_phone','hero_eyebrow','hero_title','hero_subtitle','hero_image','logo','instagram_url','story','shipping_policy','return_policy','hero_image_mobile','hero_image_tablet','catalog_version','show_story','show_categories','show_home_rails','show_service_strip','show_closing','delivery_days','shipping_fee','blocked_pincodes','blocked_states','allowed_states'];
+    var allowed=['store_name','announcement','whatsapp','support_phone','hero_eyebrow','hero_title','hero_subtitle','hero_image','logo','instagram_url','story','shipping_policy','return_policy','hero_alt','catalog_version','show_story','show_categories','show_home_rails','show_service_strip','show_closing','delivery_days','shipping_fee','blocked_pincodes','blocked_states','allowed_states'];
     var settings={};table_('Settings').forEach(function(r){if(allowed.indexOf(r.key)>=0)settings[r.key]=r.value;});
     return json_({ok:true,settings:settings,products:table_('Products').filter(function(p){return p.active.toLowerCase()==='true';}),categories:table_('Categories'),homeSections:table_('HomeSections'),deliveryRules:table_('DeliveryRules'),catalogVersion:settings.catalog_version});
   }catch(err){return json_({ok:false,error:'Store data unavailable'});}
@@ -45,32 +45,32 @@ function doPost(e){
 }
 
 /** Run only from the authorized editor or bound-sheet menu, never an anonymous HTTP action. */
-function onOpen(){var orders=SpreadsheetApp.getActive().getSheetByName('Orders');if(orders&&orders.getLastColumn()<13){var headers=orders.getRange(1,1,1,orders.getLastColumn()).getValues()[0];['email','city','state','delivery_check'].forEach(function(h,i){if(headers.indexOf(h)<0)orders.getRange(1,orders.getLastColumn()+1).setValue(h);});}SpreadsheetApp.getUi().createMenu('Noor Store').addItem('Import all 448 reference products','importAllReferenceProducts').addItem('Make imported products editable','materializeProducts').addToUi();}
+function onOpen(){var orders=SpreadsheetApp.getActive().getSheetByName('Orders');if(orders&&orders.getLastColumn()<13){var headers=orders.getRange(1,1,1,orders.getLastColumn()).getValues()[0];['email','city','state','delivery_check'].forEach(function(h,i){if(headers.indexOf(h)<0)orders.getRange(1,orders.getLastColumn()+1).setValue(h);});}SpreadsheetApp.getUi().createMenu('Noor Store').addItem('Import all 472 catalog products','importAllReferenceProducts').addItem('Make imported products editable','materializeProducts').addToUi();}
 function importAllReferenceProducts(){
  var ui=SpreadsheetApp.getUi();
- if(ui.alert('Import all reference products?','This backs up Products and replaces the catalog with all 448 reference items. Orders are untouched.',ui.ButtonSet.YES_NO)!==ui.Button.YES)return;
- var url='https://github.com/MyStore-Noor/noor.ethnic.wear/raw/refs/heads/arena/5beb3e1b-noor-ethnic-wear/public/catalog-seed.json';
+ if(ui.alert('Import all reference products?','This backs up Products and replaces the catalog with all 472 current products. Orders are untouched.',ui.ButtonSet.YES_NO)!==ui.Button.YES)return;
+ var url='https://github.com/MyStore-Noor/noor.ethnic.wear/raw/refs/heads/arena/c9f0b6fe-noor-ethnic-wear/public/catalog-seed.json';
  var response=UrlFetchApp.fetch(url,{followRedirects:true});
  var data=JSON.parse(response.getContentText());
- if(data.rows.length!==448||data.headers[0]!=='id'||new Set(data.rows.map(function(r){return r[0];})).size!==448)throw new Error('Import validation failed, existing data was not changed');
+ if(!data.rows.length||data.headers[0]!=='id'||new Set(data.rows.map(function(r){return r[0];})).size!==data.rows.length)throw new Error('Import validation failed, existing data was not changed');
  var ss=SpreadsheetApp.getActive(),p=ss.getSheetByName('Products');
  p.copyTo(ss).setName('Products backup '+Utilities.formatDate(new Date(),Session.getScriptTimeZone(),'yyyyMMdd HHmmss'));
  var rows=[data.headers].concat(data.rows).map(function(r){return r.map(safeCell_);});
  p.clearContents();p.getRange(1,1,rows.length,data.headers.length).setNumberFormat('@').setValues(rows);p.setFrozenRows(1);
  var settings=ss.getSheetByName('Settings'),values=settings.getDataRange().getValues();
  var index=values.findIndex(function(r){return r[0]==='catalog_version';});
- if(index>=0)settings.getRange(index+1,2).setValue('tannu-448-v2');else settings.appendRow(['catalog_version','tannu-448-v2']);
- ui.alert('448 products imported as editable rows. Your Orders were not changed.');
+ if(index>=0)settings.getRange(index+1,2).setValue('noor-472-v3');else settings.appendRow(['catalog_version','noor-472-v3']);
+ ui.alert(data.rows.length+' products imported as editable rows. Your Orders were not changed.');
 }
 function materializeProducts(){
  var ss=SpreadsheetApp.getActive(),p=ss.getSheetByName('Products');
  var rows=p.getDataRange().getValues();
- if(rows.length!==449||rows[0][0]!=='id')throw new Error('First allow external access in CatalogImport A1 and wait for all 448 products');
+ if(rows.length!==473||rows[0][0]!=='id')throw new Error('First allow external access in CatalogImport A1 and wait for all 472 products');
  // Only replace the formula after verifying every imported handle and creating a backup.
- if(new Set(rows.slice(1).map(function(r){return r[0];})).size!==448)throw new Error('Import has duplicate/missing IDs');
+ if(new Set(rows.slice(1).map(function(r){return r[0];})).size!==472)throw new Error('Import has duplicate/missing IDs');
  p.copyTo(ss).setName('Products linked backup '+Date.now());
  p.clearContents();p.getRange(1,1,rows.length,rows[0].length).setValues(rows.map(function(r){return r.map(safeCell_);}));
  var settings=ss.getSheetByName('Settings'),values=settings.getDataRange().getValues();
  var idx=values.findIndex(function(r){return r[0]==='catalog_version';});
- if(idx>=0)settings.getRange(idx+1,2).setValue('tannu-448-v2');
+ if(idx>=0)settings.getRange(idx+1,2).setValue('noor-472-v3');
 }

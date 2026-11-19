@@ -1,19 +1,21 @@
 # Noor store, Sheet kaise chalegi
 
+> Current revision (19 November 2026): website me 472 products hain (448 reference + 24 curated additions), uploaded Diwali poster ek hi hero image hai, aur GitHub Pages current branch se Actions workflow ke through publish hoti hai. Purane 448 / legacy-mode notes niche historical context ke liye hain.
+
 ## 1. Aapki Sheet
 
 https://docs.google.com/spreadsheets/d/1UlPFsN1aL1OIi_5tpOc8pF3WstbzPOdf1QFygp9E8Ro/edit
 
-Settings me `whatsapp` khaali hai. Apna asli WhatsApp country code ke saath daaliye (sirf digits). Jab tak khaali hai, checkout safely disabled rahega. Koi demo number nahi hai.
+Settings me WhatsApp number `919785795831` configured hai (sirf digits). Agar number hata diya to checkout safely disabled rahega. Koi demo number nahi hai.
 
-- Settings: naam, announcement, hero copy, logo/image path, Instagram, story aur delivery/return policy.
+- Settings: naam, announcement, hero image/alt text, logo/image path, Instagram, story aur delivery/return policy.
 - Products: price rupees me, compare_price old price, images aur sizes `|` se separate. `active` aur `in_stock`: `true`/`false`.
 - Categories: id ko product category se match rakhein. Khaali category me products invent nahi honge.
 - Orders: WhatsApp requests. Request saved ka matlab payment/confirmed order nahi hai.
 - OrderItems: har request ki alag items.
 - Reviews/Coupons: future extension, abhi storefront me enabled nahi.
 
-4 starter products source repo se add hain. Saare reference products lane ke liye Products tab select karein, File > Import > Upload > `docs/catalog-import.csv` > Replace current sheet. Puri spreadsheet replace mat karein. Prices, product rights, images aur availability launch se pehle verify karein.
+Current website catalog me 472 products hain. Sheet me poora catalog lane ke liye Products tab select karein, File > Import > Upload > `docs/catalog-import.csv` > Replace current sheet. Puri spreadsheet replace mat karein. Prices, product rights, images aur availability launch se pehle verify karein.
 
 ## 2. Private Sheet bridge, recommended
 
@@ -32,7 +34,7 @@ Apps Script public order endpoint me product/size/quantity/price validation, for
 
 ## 3. GitHub Pages + Actions
 
-Repo Settings > Pages > Build and deployment > Source: GitHub Actions. Current branch push ya manual workflow run deployment karega. Agar environment branch restriction ho to current `arena/5beb3e1b-noor-ethnic-wear` ko allow karein. Relative assets project Pages URL aur custom domain dono par kaam karte hain.
+Repo Settings > Pages > Build and deployment > Source: GitHub Actions. Current branch push ya manual workflow run deployment karega. `github-pages` environment ki deployment branch policy me current `arena/c9f0b6fe-noor-ethnic-wear` branch allowed hai. Relative assets project Pages URL aur custom domain dono par kaam karte hain.
 
 Apne domain ke liye Actions variable `CUSTOM_DOMAIN` me sirf domain daalein, protocol/path nahi. DNS provider par GitHub Pages ke current documented A records / www CNAME set karein, Pages me domain verify karein aur Enforce HTTPS enable karein. Domain abhi user se confirm hona baaki hai; existing website ka domain bina confirmation change nahi kiya gaya.
 
@@ -48,9 +50,9 @@ Build aur CSV/product/message unit tests pass hain. Sandbox network Google endpo
 
 ## Updated: full-catalog revision
 
-The first-version four-product instructions above are superseded by [IMPORT-STATUS.md](IMPORT-STATUS.md): all 448 source products are now in the website export, and the actual Sheet bulk import awaits Google's desktop **Allow access** permission. WhatsApp is now configured in the actual Sheet using the supplied owner number.
+The first-version four-product instructions above are superseded by [IMPORT-STATUS.md](IMPORT-STATUS.md): the website export contains 448 source products plus 24 curated additions, while the actual Sheet bulk import awaits Google's desktop **Allow access** permission. WhatsApp is configured in the local settings using the supplied owner number.
 
-Settings `show_categories`, `show_home_rails`, `show_story`, `show_service_strip`, `show_closing`: `false` hides a section, `true` shows it. The extra hero copy has been removed outright. `hero_image` is desktop, `hero_image_tablet` is tablet, `hero_image_mobile` is the phone portrait. Each image is shown uncropped at its own aspect ratio. Poster artwork includes the owner's printed offer/payment/return statements; the site itself only makes WhatsApp order requests, so confirm your policy and poster claims before launch.
+Settings `show_categories`, `show_home_rails`, `show_story`, `show_service_strip`, `show_closing`: `false` hides a section, `true` shows it. The extra hero copy has been removed outright. `hero_image` is the single uploaded poster and `hero_alt` supplies its accessible description; the old tablet/mobile image keys no longer exist. The poster is shown uncropped at its own aspect ratio. Poster artwork includes the owner's printed offer/payment/return statements; the site itself only makes WhatsApp order requests, so confirm your policy and poster claims before launch.
 
 HomeSections rows: change `title`, `subtitle`, `collection`, `count` or `active`. Product rows additionally support `collections` (pipe-separated), `size_pricing` (JSON in rupees), `colour_group`, `details` (pipe-separated) and `published_at`.
 
@@ -58,9 +60,9 @@ Browser automation is now available and passed at 390/820/1440px with external s
 
 ## Publishing status (updated)
 
-GitHub Pages is enabled and publishes this branch root in **legacy** mode. The run-time files that Vite normally serves from `public/` are mirrored to the root, so the published site is the real storefront.
+GitHub Pages publishes through **GitHub Actions** workflow mode from the current branch. `npm run sync:pages` still mirrors `public/` to the repository root for local/legacy compatibility, and the deployed site is the Vite `dist/` artifact.
 
 - Refresh the mirror after any `public/` change: `npm run sync:pages`
 - The mirror is verified by `tests/pages-root.test.js`, so CI fails on drift.
-- The workflow builds, tests and then checks the live URL (served `index.html`, `src/app.js`, snapshot, PIN list and hero image) before reporting success.
-- If Pages is switched to the “GitHub Actions” source, the workflow automatically deploys `dist/` with `actions/deploy-pages` instead.
+- The workflow builds, tests, deploys `dist/`, and checks the live URL against `dist/build-info.json` (commit, HTML, bundle, snapshot, PIN list and hero image) before reporting success.
+- If Pages is switched back to legacy branch-root mode, the verifier automatically falls back to comparing served `index.html` and `src/app.js` with the commit.

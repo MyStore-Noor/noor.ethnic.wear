@@ -1,6 +1,6 @@
 # Hero and product-page revision history
 
-**Latest request supersedes the hero selection below:** all banner files now come unchanged from `mystorebyme/pussya-product`, branch `arena/f2c07741-pussya-product`, `apps/web/public/images/banners/`. Desktop/tablet/fluid are 1672×941; mobile is 1080×608. They use versioned `pussya-banner-*-v4.webp` filenames. The three `hero-noor-*-v3.webp` files and superseded `banner-*.webp` files were deleted. HTML, snapshot and the actual Sheet Settings were updated. File hashes were compared against the requested source, and responsive browser checks passed at 390/820/1440px. The source repo intentionally uses the same poster composition at all breakpoints, not the previous three-panel artwork.
+**Current request (19 November 2026) supersedes all hero notes below:** the owner's uploaded “Up to 75% Off” poster is now the only hero asset, saved as `assets/noor-diwali-hero.webp` in both `assets/` and `public/assets/`. The four old `pussya-banner-*-v4.webp` files and the previous `hero_image_tablet` / `hero_image_mobile` settings were deleted. A real-text offer strip below the poster makes the offer, secure-payment and returns claims accessible as HTML; the whole poster remains one Shop the collection link.
 
 The previous selection below is historical; the product-page and size-chart work remains in place.
 

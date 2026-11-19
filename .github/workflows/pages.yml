@@ -1,8 +1,8 @@
-name: Build, verify and publish Noor storefront
+name: Deploy Noor to GitHub Pages
 
 on:
   push:
-    branches: [main, arena/5beb3e1b-noor-ethnic-wear]
+    branches: [main, arena/c9f0b6fe-noor-ethnic-wear]
   workflow_dispatch:
 
 permissions:
@@ -11,8 +11,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: true
+  group: github-pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -33,7 +33,9 @@ jobs:
         run: node scripts/snapshot.mjs
         env:
           SHEETS_WEBAPP_URL: ${{ vars.SHEETS_WEBAPP_URL }}
-      - name: Production build
+      - name: Mirror runtime files to the Pages root
+        run: npm run sync:pages
+      - name: Production build and deployment manifest
         run: npm run build
       - name: Custom domain (optional)
         env:
@@ -73,11 +75,17 @@ jobs:
     needs: build
     if: needs.build.outputs.pages_mode == 'workflow'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Download the exact build for verification
+        uses: actions/download-artifact@v4
+        with:
+          name: noor-storefront-build
+          path: dist
       - name: Publish to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

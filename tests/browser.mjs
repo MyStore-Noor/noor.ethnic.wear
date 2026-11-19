@@ -5,6 +5,7 @@ import {readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {normalizeProduct,productMatches} from '../src/store.js';
 const snapshot=JSON.parse(await readFile('public/store-snapshot.json','utf8'));
+const expectedCount=snapshot.products.length;
 const BASE=process.env.QA_BASE||'http://127.0.0.1:5174';
 const errors=[];
 for(const width of [390,820,1440]){
@@ -16,11 +17,13 @@ for(const width of [390,820,1440]){
  await page.route('https://cdn.shopify.com/**',async r=>r.fulfill({contentType:'image/png',body:await readFile('public/assets/mark.png')}));
  await page.goto(BASE);
  // Smooth scrolling is a product feature; QA scrolls instantly so element positions stay stable.
- await page.addStyleTag({content:'html{scroll-behavior:auto!important}'});await page.waitForFunction(()=>document.querySelector('#product-count').textContent.includes('448'));
+ await page.addStyleTag({content:'html{scroll-behavior:auto!important}'});await page.waitForFunction(count=>document.querySelector('#product-count').textContent.includes(String(count)),expectedCount);
  assert.equal(await page.locator('.hero-copy').count(),0);
- assert.ok((await page.locator('#hero-image').evaluate(img=>img.currentSrc)).includes(width<768?'pussya-banner-mobile-v4':width<1024?'pussya-banner-tablet-v4':'pussya-banner-desktop-v4'));
+ assert.ok((await page.locator('#hero-image').evaluate(img=>img.currentSrc)).includes('noor-diwali-hero.webp'));
+ assert.equal(await page.locator('#hero-desktop').count(),0);assert.equal(await page.locator('#hero-tablet').count(),0);
+ assert.ok(await page.locator('.hero-benefits').isVisible());
  await page.screenshot({path:`/home/user/noor-new-home-${width}.png`});
- assert.equal(await page.locator('.home-rail').count(),5);
+ assert.equal(await page.locator('.home-rail').count(),snapshot.homeSections.filter(r=>r.active==='true').length);
  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`home overflow at ${width}`);
  // The floating WhatsApp button always takes its number and prefilled message from the Sheet settings.
  const fab=page.locator('#wa-fab');assert.equal(await fab.isVisible(),true);const fabHref=await fab.getAttribute('href');
@@ -119,10 +122,10 @@ for(const width of [390,820,1440]){
 await page.evaluate(()=>document.querySelector('#panel').close());await page.evaluate(()=>document.querySelector('#product-back').click());await page.waitForFunction(()=>document.querySelector('#product-page').hidden===true);await page.locator('#advanced-open').waitFor({state:'visible'});
  assert.equal(await page.locator('#product-page').evaluate(e=>e.hidden),true);
  await page.evaluate(()=>document.querySelector('#advanced-open').click());await page.locator('#filter-stock').check();await page.evaluate(()=>document.querySelector('#reset-filters').click());
- assert.match(await page.locator('#product-count').textContent(),/448/);
+ assert.match(await page.locator('#product-count').textContent(),new RegExp('^'+expectedCount+' pieces'));
  await page.locator('#products a').first().click();await page.locator('#add-form').waitFor();
  await page.reload();await page.locator('#product-page #add-form').waitFor();assert.equal(await page.locator('#storefront').evaluate(e=>e.hidden),true);
- console.log(`PASS ${width}px: new banner, full PDP + deep link/reload/back, gallery, inches/cm chart, sold-out guard, size retention, bag + email + PIN-derived city/state + verified deliverable PIN + WhatsApp, fixed WhatsApp button, offline recovery + retry, back-to-top, no overflow`);
+ console.log(`PASS ${width}px: uploaded single banner + offer strip, full PDP + deep link/reload/back, gallery, inches/cm chart, sold-out guard, size retention, bag + email + PIN-derived city/state + verified deliverable PIN + WhatsApp, fixed WhatsApp button, offline recovery + retry, back-to-top, no overflow`);
  await browser.close();
 }
 assert.deepEqual(errors,[]);

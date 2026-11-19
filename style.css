@@ -116,3 +116,16 @@ img.image-fallback{object-fit:contain;background:#f2e8d8;padding:12%}
 .product-card .price{display:inline-flex;align-items:baseline;gap:8px}
 .product-card del{margin-left:2px}
 @media(prefers-reduced-motion:reduce){.hero-poster img{animation:none}}
+
+/* Current hero: one uploaded poster, real-text assurances and new-stock labels. */
+.hero.banner-only .hero-poster{box-shadow:0 18px 50px #3d1f181a;background:var(--paper);overflow:hidden}
+.hero.banner-only .hero-poster img{width:100%;height:auto;object-fit:contain}
+.hero-benefits{max-width:1920px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:42px;flex-wrap:wrap;padding:15px 4%;background:linear-gradient(90deg,#4c202a,#652c38 48%,#4c202a);color:#f9ead0;border-block:1px solid #b99a63;font-size:11px;letter-spacing:.7px}
+.hero-benefits span{display:inline-flex;align-items:center;gap:9px;white-space:nowrap}
+.hero-benefits b{color:#d7b06a;font-size:15px;font-weight:400}
+.hero-benefits strong{color:#f4cf7c;font-weight:600}
+.hero-benefits a{display:inline-flex;align-items:center;gap:8px;border:1px solid #c9a45e;padding:8px 16px;color:#fff8e9;font-size:10px;letter-spacing:1.1px;text-transform:uppercase;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.hero-benefits a:hover{background:#d7b06a;border-color:#d7b06a;color:#4c202a}
+.just-in{display:inline-block;margin-left:8px;padding:2px 6px;background:var(--wine);color:#fff8e9;font-size:7px;letter-spacing:1px;text-transform:uppercase;vertical-align:1px}
+@media(max-width:760px){.hero.banner-only .hero-poster{box-shadow:0 10px 28px #3d1f1814}.hero-benefits{gap:9px 18px;padding:12px 4%;font-size:10px}.hero-benefits a{padding:7px 12px}.just-in{margin-left:5px}}
+@media(prefers-reduced-motion:reduce){.hero-benefits a{transition:none}}

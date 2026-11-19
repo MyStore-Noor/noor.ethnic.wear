@@ -1,51 +1,45 @@
-# Noor Ethnic Wear, full catalog festive store
+# Noor Ethnic Wear
 
-Static, mobile-first storefront using original Noor artwork and the requested Tannu reference catalog/workflow. Vanilla JavaScript/CSS with Vite; GitHub Pages Actions deployment included.
+A mobile-first static festive storefront for Anarkali suits, lehenga choli, sarees and suit sets. Vanilla JavaScript and CSS, built with Vite and published to GitHub Pages through GitHub Actions.
+
+## Current revision
+
+- **472 products and 2,928 photos**: the original 448-product / 2,904-photo reference catalog plus **24 curated, in-stock additions**. See [STOCK-ADDITIONS](docs/STOCK-ADDITIONS.md) for image provenance and the important note that this is a curated expansion, not a live inventory feed.
+- **One uploaded hero poster**: `assets/noor-diwali-hero.webp` is an optimised WebP made from the owner's “Up to 75% Off” artwork. The old desktop, tablet, mobile and fluid `pussya-banner-*-v4.webp` files were removed from both `assets/` and `public/assets/`.
+- A real-text, accessible offer strip under the poster repeats **Up to 75% off**, **Secure payment**, **Easy returns** and a Shop the offer link; the whole poster remains clickable.
+- A new **Just Added** category, navigation link and home rail put the new stock first. New cards carry a small “Just in” label.
+- Open Graph/canonical metadata, a single high-priority hero preload, stricter Pages-root pruning and a deployment build manifest were added.
+- `.github/workflows/pages.yml` now runs on this branch. It tests, builds, uploads the exact artifact, deploys through `actions/deploy-pages`, and verifies the published commit, HTML, bundle, snapshot, PIN list and hero asset.
 
 ## Run
 
-```
+```bash
 npm ci
 npm run dev
 npm test
 npm run build
+npm run sync:pages       # mirror public/ runtime files to the Pages root
+npm run catalog:rebuild  # regenerate catalog artifacts from the 448-item base + stock additions
 ```
 
-## This revision
+`npm run build` also writes `dist/build-info.json`. `scripts/check-live.mjs` uses that manifest to verify a workflow-built site, and falls back to source-file comparison for a legacy branch-root Pages deployment.
 
-- **448 products, 2,904 photo URLs**, all source prices, size pricing/availability, descriptions, colours and memberships.
-- Original Noor image-only hero with desktop/tablet/mobile image sources, using the original Pussya reference banner files on all devices.
-- Source-style category circles and Trending, curated Best Sellers, New Arrivals, Lehenga Choli and Explore rails.
-- Advanced collection, colour, size, fabric, price and availability filters; search, sorting, wishlist and persistent shopping bag.
-- Thumbnail gallery, previous/next, swipe, keyboard navigation, hover zoom, full-screen viewer, colour-linked products, quantity, buy now, share, detail/shipping/returns accordions.
-- Sheet phone set to the supplied number; no contact fallback embedded in JS. All contact UI uses loaded settings.
-- Sheet settings hide/show categories, home rails, story, services and closing CTA. Categories and HomeSections have their own active flags.
-- Refined directional-fill buttons, press feedback and second-photo hover. Saga page content was inspected, but its exact animation implementation was not available through the fetched text, so these are independently implemented rather than claimed pixel-identical copies.
+## Catalog
 
-[Store Control Sheet](https://docs.google.com/spreadsheets/d/1UlPFsN1aL1OIi_5tpOc8pF3WstbzPOdf1QFygp9E8Ro/edit)
+`public/store-snapshot.json` is the runtime last-known catalog. `public/catalog-seed.json` and `docs/catalog-import.csv` are regeneration inputs; `docs/stock-additions.json` is the canonical list of curated additions. The root `config.json`, `store-snapshot.json`, `pincode-map.json` and `assets/` mirror `public/` byte for byte, enforced by `tests/pages-root.test.js` and `npm run sync:pages`.
 
-**Read [IMPORT-STATUS](docs/IMPORT-STATUS.md) for the external-data permission needed to complete the Google Sheet bulk import.** Existing Products were backed up. The website already contains all 448 reference products as a labeled snapshot; live private-Sheet sync and order writes await the Apps Script deployment, described in [STORE-SETUP](docs/STORE-SETUP.md).
-
-## Catalog export
-
-`public/store-snapshot.json` is a full exported last-known catalog/settings payload, not a second runtime catalog to maintain. The build replaces it from the authorized Sheet bridge. `public/catalog-seed.json` and `docs/catalog-import.csv` are the one-time migration inputs. A migration marker prevents the old four-row starter Sheet from silently truncating the full reference export. After migration, intentional product removals are respected.
-
-To regenerate migration files from a local checkout of the supplied reference:
-
-```
-node scripts/import-reference.mjs /path/to/reference/apps/web/src/data/catalog.json
-```
-
-## Verification
-
-`npm test`: 9 tests for CSV parsing, type handling, order messages, all 448 unique handles/2904 photos, CSV integrity, memberships, size pricing and sold-out flags.
-
-`tests/browser.mjs`: optional headless Chromium QA at 390, 820 and 1440px. Passed gallery, full-screen, bag, customer form, WhatsApp destination, advanced filter reset, home rails, repeated product links and horizontal-overflow checks. CDN photos and WhatsApp navigation are stubbed in these tests; no actual customer order or message was sent. Actual CDN accessibility, Google writes and real-device network performance remain unverified.
+Current catalog version: **`noor-472-v3`**. The storefront uses the committed snapshot unless an authorised Sheet web-app bridge is configured. `scripts/Code.gs` contains the private-Sheet bridge and the 472-row import helper. The Sheet bulk import and live order writes still require the owner's Google authorization; see [IMPORT-STATUS](docs/IMPORT-STATUS.md) and [STORE-SETUP](docs/STORE-SETUP.md).
 
 ## Deployment
 
-Current-branch push triggers `.github/workflows/pages.yml`. GitHub Pages enablement was previously denied by the integration (403). Custom domain is still unconfirmed. No claim of production publication or live payment confirmation is made.
+Live URL: <https://mystore-noor.github.io/noor.ethnic.wear/>
 
-## Latest product-page fix
+The Pages environment uses the **GitHub Actions** build type. Pushes to `main` or `arena/c9f0b6fe-noor-ethnic-wear`, plus manual `workflow_dispatch`, trigger `.github/workflows/pages.yml`. The current branch is registered in the `github-pages` environment's deployment branch policy. An optional `CUSTOM_DOMAIN` Actions variable writes `dist/CNAME`; no unverified domain has been assumed.
 
-The hero now uses the exact desktop, tablet, mobile and fluid banner files from the requested Pussya branch. The previous three-panel artwork files have been deleted, and HTML plus Sheet paths point to the new versioned files. Product details now have a dedicated full-page hash route, separate from shopping/help modals. A Saga-inspired size chart provides inches/cm, source-label measurements, sold-out states and a measuring illustration without inventing garment dimensions. See [HERO-PDP-REVISION](docs/HERO-PDP-REVISION.md).
+The workflow supports both publishing modes: in workflow mode it deploys `dist/`, and in legacy branch-root mode it verifies the served source files. Verification retries until the new snapshot, build manifest, hero image and full PIN list are live.
+
+## Verification
+
+`npm test` covers catalog integrity, CSV regeneration, all curated additions, Pages-root mirroring, stale-banner removal, delivery PINs, customer/order validation, retries and data signatures. `tests/browser.mjs` is optional headless Chromium QA at 390, 820 and 1440px; external Google/CDN/WhatsApp services are mocked there. Actual live Sheet writes, real-device performance and payment collection remain outside this static storefront.
+
+No payment is taken on the site. WhatsApp order requests ask the owner to confirm availability, delivery charges and the final total before payment.

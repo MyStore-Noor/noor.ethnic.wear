@@ -6,11 +6,26 @@ test('WhatsApp message has selected size, quantities and delivery details',()=>{
 import {readFileSync} from 'node:fs';
 import {productMatches,variantPrice,truth} from '../src/store.js';
 const snapshot=JSON.parse(readFileSync(new URL('../public/store-snapshot.json',import.meta.url)));
-test('Complete requested catalog: 448 unique products and 2904 photos',()=>{assert.equal(snapshot.products.length,448);assert.equal(new Set(snapshot.products.map(p=>p.id)).size,448);assert.equal(snapshot.products.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0),2904);});
-test('CSV import preserves all full-catalog fields',()=>{const rows=parseCSV(readFileSync(new URL('../docs/catalog-import.csv',import.meta.url),'utf8'));assert.equal(rows.length,448);for(let i=0;i<rows.length;i++){assert.equal(rows[i].id,snapshot.products[i].id);assert.equal(Number(rows[i].price),snapshot.products[i].price);assert.equal(rows[i].images,snapshot.products[i].images);assert.equal(rows[i].size_pricing,snapshot.products[i].size_pricing);}});
-test('Collection memberships, aliases and real variants work',()=>{const p=normalizeProduct(snapshot.products[0]);assert.equal(productMatches(p,'party-wear-gown'),true);assert.equal(productMatches(p,'all'),true);assert.equal(productMatches(p,'lehnga-choli'),false);const v={...p,size_pricing:{XL:{price:799,compare_price:1599,available:false}}};assert.deepEqual(variantPrice(v,'XL'),{price:799,compare_price:1599});assert.equal(truth('FALSE'),false);});
-test('Source sold-out flags are preserved, not invented stock counts',()=>{assert.equal(snapshot.products.filter(p=>p.in_stock==='false').length,17);const p=normalizeProduct(snapshot.products[0]);assert.ok(p.sizes.includes('L [40]'));assert.equal(p.size_pricing['L [40]'].available,false);});
+const additions=JSON.parse(readFileSync(new URL('../docs/stock-additions.json',import.meta.url),'utf8')).products;
+const expectedCount=448+additions.length;
+const expectedPhotos=2904+additions.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0);
+test(`Complete current catalog: ${expectedCount} unique products and ${expectedPhotos} photos`,()=>{assert.equal(snapshot.products.length,expectedCount);assert.equal(new Set(snapshot.products.map(p=>p.id)).size,expectedCount);assert.equal(snapshot.products.reduce((sum,p)=>sum+p.images.split('|').filter(Boolean).length,0),expectedPhotos);});
+test('CSV import preserves all full-catalog fields',()=>{const rows=parseCSV(readFileSync(new URL('../docs/catalog-import.csv',import.meta.url),'utf8'));assert.equal(rows.length,expectedCount);for(let i=0;i<rows.length;i++){assert.equal(rows[i].id,snapshot.products[i].id);assert.equal(Number(rows[i].price),snapshot.products[i].price);assert.equal(rows[i].images,snapshot.products[i].images);assert.equal(rows[i].size_pricing,snapshot.products[i].size_pricing);}});
+test('Curated stock additions are complete, local, available and surfaced first',()=>{
+ assert.equal(additions.length,24);
+ assert.deepEqual(snapshot.products.slice(0,additions.length),additions);
+ assert.equal(snapshot.catalogVersion,'noor-472-v3');
+ assert.ok(snapshot.categories.some(c=>c.id==='just-added'));
+ assert.equal(snapshot.homeSections[0].collection,'just-added');
+ for(const p of additions){
+  assert.equal(p.active,'true');assert.equal(p.in_stock,'true');
+  assert.ok(p.collections.split('|').includes('just-added'));
+  assert.match(p.images,/^assets\/stock\/[a-z0-9-]+\.webp$/);
+ }
+});
+test('Collection memberships, aliases and real variants work',()=>{const p=normalizeProduct(snapshot.products[0]);assert.equal(productMatches(p,'just-added'),true);assert.equal(productMatches(p,'all'),true);assert.equal(productMatches(p,'lehnga-choli'),false);const v={...p,size_pricing:{XL:{price:799,compare_price:1599,available:false}}};assert.deepEqual(variantPrice(v,'XL'),{price:799,compare_price:1599});assert.equal(truth('FALSE'),false);});
+test('Source sold-out flags are preserved, not invented stock counts',()=>{assert.equal(snapshot.products.filter(p=>p.in_stock==='false').length,17);const p=normalizeProduct(snapshot.products[additions.length]);assert.ok(p.sizes.includes('L [40]'));assert.equal(p.size_pricing['L [40]'].available,false);});
 
 import {sizeMeasurements,measurementUnit} from '../src/store.js';
-test('Size chart uses source label values and actual availability',()=>{const p=normalizeProduct(snapshot.products[0]),rows=sizeMeasurements(p);assert.equal(rows.find(r=>r.label==='M [38]').bustInches,38);assert.equal(rows.find(r=>r.label==='L [40]').available,false);assert.equal(measurementUnit(38,'cm'),'96.5 cm');assert.equal(measurementUnit(34,'in'),'34 in');});
+test('Size chart uses source label values and actual availability',()=>{const p=normalizeProduct(snapshot.products[additions.length]),rows=sizeMeasurements(p);assert.equal(rows.find(r=>r.label==='M [38]').bustInches,38);assert.equal(rows.find(r=>r.label==='L [40]').available,false);assert.equal(measurementUnit(38,'cm'),'96.5 cm');assert.equal(measurementUnit(34,'in'),'34 in');});
 test('Size chart does not invent dimensions for free size',()=>{assert.equal(sizeMeasurements({sizes:['Free Size'],in_stock:true,size_pricing:{}})[0].bustInches,null);assert.equal(measurementUnit(null,'cm'),'Not supplied');});
